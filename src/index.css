@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 100% 50%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 340 100% 50%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 62%;
+
+    --accent: 0 100% 50%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 16%;
+    --input: 0 0% 12%;
+    --ring: 0 100% 50%;
+
+    --radius: 0.75rem;
+
+    --brand-red: 0 100% 50%;
+    --brand-pink: 340 100% 50%;
+    --glass-bg: 0 0% 10%;
+    
+    --glow-primary: 0 0 20px hsl(0 100% 50% / 0.5);
+    --glow-secondary: 0 0 20px hsl(340 100% 50% / 0.5);
+    
+    /* Dashboard green accent */
+    --dashboard-green: 142 76% 36%;
+    --dashboard-green-bright: 142 76% 50%;
+    --dashboard-green-glow: 0 0 30px hsl(142 76% 50% / 0.4);
+    
+    /* Soft Red Pastels */
+    --soft-red-start: 0 86% 71%;
+    --soft-red-end: 0 100% 90%;
+    --soft-red-hover-start: 0 86% 76%;
+    --soft-red-hover-end: 0 100% 93%;
+    
+    /* Premium neutral tones */
+    --premium-card-bg: 0 0% 10%;
+    --premium-border: 0 0% 18%;
+    --premium-border-hover: 0 0% 25%;
+  }
+}
+
+@layer utilities {
+  .glow-border {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+  
+  .glow-border-pink {
+    box-shadow: 0 0 20px hsl(var(--secondary) / 0.3);
+  }
+  
+  .glass-card {
+    background: hsl(var(--glass-bg) / 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid hsl(var(--border));
+  }
+  
+  .soft-glow {
+    box-shadow: 0 4px 20px rgba(255, 106, 106, 0.15);
+  }
+  
+  .soft-glow-hover {
+    box-shadow: 0 8px 30px rgba(255, 106, 106, 0.25);
+  }
+  
+  .premium-lift {
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+  }
+  
+  .premium-lift:hover {
+    transform: translateY(-4px);
+  }
+  
+  .dashboard-glow-green {
+    box-shadow: 0 0 30px hsl(var(--dashboard-green) / 0.4);
+  }
+  
+  .dashboard-glow-green-strong {
+    box-shadow: 0 0 40px hsl(var(--dashboard-green-bright) / 0.5);
+  }
+  
+  .dashboard-card-hover {
+    transition: all 0.3s ease-out;
+  }
+  
+  .dashboard-card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  @keyframes gradient {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+  
+  .animate-gradient {
+    animation: gradient 6s ease infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    33% {
+      transform: translateY(-20px) translateX(10px);
+    }
+    66% {
+      transform: translateY(10px) translateX(-10px);
+    }
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-float-slow {
+    animation: float 8s ease-in-out infinite;
+  }
+  
+  @keyframes scale-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  .animate-scale-in {
+    animation: scale-in 0.2s ease-out;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
