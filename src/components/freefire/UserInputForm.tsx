@@ -43,17 +43,17 @@ export const UserInputForm = ({ onDataChange, initialData }: UserInputFormProps)
   });
 
   return (
-    <div className="glass-card rounded-lg p-6 space-y-4">
-      <h2 className="text-2xl font-bold text-foreground">Enter Game Details</h2>
+    <div className="glass-card rounded-lg p-4 sm:p-6 space-y-4">
+      <h2 className="text-xl sm:text-2xl font-bold text-foreground">Enter Game Details</h2>
       
       <Form {...form}>
-        <form className="space-y-4">
+        <form className="space-y-4 sm:space-y-5">
           <FormField
             control={form.control}
             name="uid"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-foreground">
+                <FormLabel className="text-sm sm:text-base text-foreground">
                   In-Game UID <span className="text-primary">*</span>
                 </FormLabel>
                 <FormControl>
@@ -61,11 +61,12 @@ export const UserInputForm = ({ onDataChange, initialData }: UserInputFormProps)
                     placeholder="Enter your UID"
                     type="text"
                     inputMode="numeric"
-                    className="bg-input border-border focus:border-primary focus:ring-primary"
+                    className="h-12 text-base bg-input border-border focus:border-primary focus:ring-primary"
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
+                <p className="text-xs sm:text-sm text-muted-foreground">Your unique in-game ID (minimum 6 digits)</p>
+                <FormMessage className="text-xs sm:text-sm" />
               </FormItem>
             )}
           />
@@ -75,18 +76,18 @@ export const UserInputForm = ({ onDataChange, initialData }: UserInputFormProps)
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-foreground">
+                <FormLabel className="text-sm sm:text-base text-foreground">
                   In-Game Username <span className="text-muted-foreground text-sm">(Optional)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter your username"
-                    className="bg-input border-border focus:border-primary focus:ring-primary"
+                    className="h-12 text-base bg-input border-border focus:border-primary focus:ring-primary"
                     {...field}
                   />
                 </FormControl>
-                <p className="text-xs text-muted-foreground">For verification purposes</p>
-                <FormMessage />
+                <p className="text-xs sm:text-sm text-muted-foreground">For verification purposes</p>
+                <FormMessage className="text-xs sm:text-sm" />
               </FormItem>
             )}
           />
@@ -96,17 +97,17 @@ export const UserInputForm = ({ onDataChange, initialData }: UserInputFormProps)
             name="zoneId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-foreground">
+                <FormLabel className="text-sm sm:text-base text-foreground">
                   Zone ID <span className="text-muted-foreground text-sm">(Optional)</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter your Zone ID"
-                    className="bg-input border-border focus:border-primary focus:ring-primary"
+                    className="h-12 text-base bg-input border-border focus:border-primary focus:ring-primary"
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-xs sm:text-sm" />
               </FormItem>
             )}
           />

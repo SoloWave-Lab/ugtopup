@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import productImage from "@/assets/product-freefire.jpg";
+import { Loader2 } from "lucide-react";
 
 const FreefireDiamond = () => {
   const [formData, setFormData] = useState<UserFormData | null>(null);
@@ -17,6 +19,7 @@ const FreefireDiamond = () => {
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [orderId, setOrderId] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { user } = useAuth();
   const { toast } = useToast();
@@ -61,7 +64,7 @@ const FreefireDiamond = () => {
     setIsReviewOpen(true);
   };
 
-  const handleConfirmPurchase = () => {
+  const handleConfirmPurchase = async () => {
     if (!user || !selectedPackage || !formData) return;
 
     // Check sufficient balance
@@ -74,47 +77,62 @@ const FreefireDiamond = () => {
       return;
     }
 
-    // Create order object
-    const order = {
-      orderId,
-      product: "Free Fire Diamond",
-      package: selectedPackage.name,
-      quantity: selectedPackage.quantity,
-      price: selectedPackage.price,
-      currency: selectedPackage.currency,
-      uid: formData.uid,
-      username: formData.username || "Not provided",
-      zoneId: formData.zoneId || "Not provided",
-      paymentMethod: "Credit",
-      email: user.email,
-      timestamp: new Date().toISOString(),
-      status: "completed",
-    };
+    setIsSubmitting(true);
 
-    // Store order in localStorage (temporary - will integrate with backend later)
-    const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-    localStorage.setItem('orders', JSON.stringify([...existingOrders, order]));
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 800));
 
-    // Deduct credits from user balance
-    const updatedUser = {
-      ...user,
-      balance: (user.balance || 0) - selectedPackage.price,
-      orders: (user.orders || 0) + 1,
-    };
-    localStorage.setItem('tempUser', JSON.stringify(updatedUser));
+      // Create order object
+      const order = {
+        orderId,
+        product: "Free Fire Diamond",
+        package: selectedPackage.name,
+        quantity: selectedPackage.quantity,
+        price: selectedPackage.price,
+        currency: selectedPackage.currency,
+        uid: formData.uid,
+        username: formData.username || "Not provided",
+        zoneId: formData.zoneId || "Not provided",
+        paymentMethod: "Credit",
+        email: user.email,
+        timestamp: new Date().toISOString(),
+        status: "completed",
+      };
 
-    // Update user context (trigger re-render)
-    window.dispatchEvent(new Event('storage'));
+      // Store order in localStorage (temporary - will integrate with backend later)
+      const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+      localStorage.setItem('orders', JSON.stringify([...existingOrders, order]));
 
-    // Close review, show success
-    setIsReviewOpen(false);
-    setIsSuccessOpen(true);
+      // Deduct credits from user balance
+      const updatedUser = {
+        ...user,
+        balance: (user.balance || 0) - selectedPackage.price,
+        orders: (user.orders || 0) + 1,
+      };
+      localStorage.setItem('tempUser', JSON.stringify(updatedUser));
 
-    toast({
-      title: "Order Placed Successfully!",
-      description: `Your order ${orderId} has been confirmed`,
-      className: "bg-dashboard-green/20 border-dashboard-green-bright",
-    });
+      // Update user context (trigger re-render)
+      window.dispatchEvent(new Event('storage'));
+
+      // Close review, show success
+      setIsReviewOpen(false);
+      setIsSuccessOpen(true);
+
+      toast({
+        title: "Order Placed Successfully!",
+        description: `Your order ${orderId} has been confirmed`,
+        className: "bg-dashboard-green/20 border-dashboard-green-bright",
+      });
+    } catch (error) {
+      toast({
+        title: "Order Failed",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleTopUpAgain = () => {
@@ -127,10 +145,39 @@ const FreefireDiamond = () => {
   const canReviewOrder = isFormValid && selectedPackage !== null;
 
   return (
-    <div className="min-h-screen bg-background">
-      <ProductHeader />
+    <div className="min-h-screen bg-background pb-24 sm:pb-8">
+      <ProductHeader 
+        productTitle="Free Fire Diamond"
+        productIcon="🔥"
+        productSubtitle="Top-Up Center"
+      />
 
-      <main className="container mx-auto px-4 py-8 space-y-8 max-w-6xl animate-fade-in">
+      {/* Product Info Section */}
+      <section className="container mx-auto px-4 py-4 sm:py-6">
+        <div className="flex items-center gap-3 sm:gap-4 p-4 sm:p-6 rounded-lg bg-card border border-border max-w-4xl mx-auto">
+          <img 
+            src={productImage} 
+            alt="Free Fire Diamond"
+            className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-lg object-cover flex-shrink-0"
+          />
+          <div className="min-w-0">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground">
+              Free Fire Diamond
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+              Official Top-Up • Fast Delivery • Secure Payment
+            </p>
+            {user && (
+              <div className="flex sm:hidden items-center gap-2 mt-2 px-3 py-1.5 rounded-md bg-background border border-border w-fit">
+                <span className="text-xs text-muted-foreground">Credits:</span>
+                <span className="text-sm font-bold text-primary">{user.balance || 0}💵</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <main className="container mx-auto px-4 py-4 sm:py-6 space-y-6 sm:space-y-8 max-w-4xl animate-fade-in">
         {/* User Input Section */}
         <section>
           <UserInputForm
@@ -146,22 +193,31 @@ const FreefireDiamond = () => {
             onSelectPackage={setSelectedPackage}
           />
         </section>
+      </main>
 
-        {/* Review Order Button - Sticky on Mobile */}
-        <div className="sticky bottom-4 z-40">
+      {/* Review Order Button - Fixed Sticky on Mobile */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-background/95 backdrop-blur-lg border-t border-border">
+        <div className="container mx-auto max-w-4xl">
+          {/* Progress Indicators */}
+          <div className="flex gap-2 justify-center mb-3">
+            <div className={`w-2 h-2 rounded-full transition-colors ${isFormValid ? "bg-primary" : "bg-muted"}`} />
+            <div className={`w-2 h-2 rounded-full transition-colors ${selectedPackage ? "bg-primary" : "bg-muted"}`} />
+            <div className={`w-2 h-2 rounded-full transition-colors ${canReviewOrder ? "bg-primary" : "bg-muted"}`} />
+          </div>
+          
           <Button
             onClick={handleReviewOrder}
             disabled={!canReviewOrder}
-            className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-primary to-secondary hover:opacity-90 glow-border disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full h-12 sm:h-14 text-base sm:text-lg font-semibold bg-gradient-to-r from-primary to-secondary hover:opacity-90 active:scale-95 transition-all glow-border disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {!isFormValid
               ? "Enter UID to Continue"
               : !selectedPackage
               ? "Select a Package"
-              : "Review Order"}
+              : `Review Order - ${selectedPackage.price}💵`}
           </Button>
         </div>
-      </main>
+      </div>
 
       {/* Order Review Modal */}
       <OrderReview
@@ -171,6 +227,7 @@ const FreefireDiamond = () => {
         selectedPackage={selectedPackage}
         formData={formData}
         orderId={orderId}
+        isSubmitting={isSubmitting}
       />
 
       {/* Success Modal */}
