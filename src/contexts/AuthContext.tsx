@@ -15,6 +15,7 @@ interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => void;
   logout: () => void;
+  updateBalance: (newBalance: number) => void;
   isAuthenticated: boolean;
 }
 
@@ -53,8 +54,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     navigate('/');
   };
 
+  const updateBalance = (newBalance: number) => {
+    if (user) {
+      const updatedUser = { ...user, balance: newBalance };
+      setUser(updatedUser);
+      localStorage.setItem('tempUser', JSON.stringify(updatedUser));
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, login, logout, updateBalance, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );

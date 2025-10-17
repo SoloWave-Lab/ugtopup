@@ -15,10 +15,10 @@ import productCapcut from "@/assets/product-capcut.jpg";
 
 const productData = {
   topup: [
-    { id: 1, title: "Free Fire Diamond 🔥", image: productFreefire, link: "/product/freefire-diamond" },
+    { id: 1, title: "Free Fire Diamond", image: productFreefire, link: "/product/freefire-diamond" },
     { id: 2, title: "Mobile Legends Diamond", image: productMl },
-    { id: 3, title: "TikTok Coins", image: productTiktok },
-    { id: 4, title: "Roblox Robux Top-Ups", image: gameRoblox },
+    { id: 3, title: "TikTok Coins", image: productTiktok, link: "/product/tiktok-coins" },
+    { id: 4, title: "Roblox Robux", image: gameRoblox, link: "/product/roblox-robux" },
   ],
   voucher: [
     { id: 1, title: "UNIPIN 2000 UC POINT", image: productUnipin },
@@ -28,12 +28,14 @@ const productData = {
   subscription: [
     { id: 1, title: "Netflix Subscription", image: productNetflix },
     { id: 2, title: "YouTube Premium", image: productYoutube },
-    { id: 3, title: "CapCut Pro", image: productCapcut },
+    { id: 3, title: "CapCut Pro", image: productCapcut, link: "/product/capcut-pro" },
+    { id: 4, title: "ChatGPT Premium", image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=400&fit=crop", link: "/product/chatgpt-premium" },
   ],
   design: [
-    { id: 1, title: "Logo Designs", image: "https://images.unsplash.com/photo-1626785774625-ddcddc3445e9?w=400&h=400&fit=crop" },
-    { id: 2, title: "Post Designs", image: "https://images.unsplash.com/photo-1558655146-d09347e92766?w=400&h=400&fit=crop" },
-    { id: 3, title: "Banner Designs", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=400&fit=crop" },
+    { id: 1, title: "Logo Design", image: "https://images.unsplash.com/photo-1626785774625-ddcddc3445e9?w=400&h=400&fit=crop", link: "/product/logo-design" },
+    { id: 2, title: "Post Design", image: "https://images.unsplash.com/photo-1558655146-d09347e92766?w=400&h=400&fit=crop", link: "/product/post-design" },
+    { id: 3, title: "Banner Design", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=400&fit=crop", link: "/product/banner-design" },
+    { id: 4, title: "Thumbnail Design", image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=400&fit=crop", link: "/product/thumbnail-design" },
   ],
 };
 
@@ -111,6 +113,7 @@ export const ProductTabs = () => {
                 key={product.id}
                 image={product.image}
                 title={product.title}
+                link={product.link}
                 onBuyNow={() => handleBuyNow(product.title)}
               />
             ))}
@@ -118,12 +121,13 @@ export const ProductTabs = () => {
         </TabsContent>
 
         <TabsContent value="design" className="animate-fade-in">
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 sm:grid-cols-3 md:grid-cols-3">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 sm:grid-cols-3 md:grid-cols-4">
             {productData.design.map((product) => (
               <ProductCard
                 key={product.id}
                 image={product.image}
                 title={product.title}
+                link={product.link}
                 onBuyNow={() => handleBuyNow(product.title)}
               />
             ))}

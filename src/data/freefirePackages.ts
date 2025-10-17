@@ -1,10 +1,10 @@
 export interface Package {
   id: string;
-  type: 'diamond' | 'subscription' | 'zone' | 'pass';
+  type?: 'diamond' | 'subscription' | 'zone' | 'pass' | 'coins' | 'robux' | 'service';
   name: string;
   quantity: number;
   price: number;
-  currency: '💵' | '💸';
+  currency: string;
 }
 
 export const diamondPackages: Package[] = [

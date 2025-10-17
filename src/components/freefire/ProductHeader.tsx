@@ -7,9 +7,10 @@ interface ProductHeaderProps {
   productTitle: string;
   productIcon: string;
   productSubtitle: string;
+  productImage?: string;
 }
 
-export const ProductHeader = ({ productTitle, productIcon, productSubtitle }: ProductHeaderProps) => {
+export const ProductHeader = ({ productTitle, productIcon, productSubtitle, productImage }: ProductHeaderProps) => {
   const { user } = useAuth();
 
   return (
