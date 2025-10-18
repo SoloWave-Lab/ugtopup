@@ -21,31 +21,31 @@ export const SuccessModal = ({ isOpen, onClose, orderId, onTopUpAgain }: Success
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-card border-dashboard-green-bright/20 max-w-[95vw] sm:max-w-md">
+      <DialogContent className="bg-card border-dashboard-green-bright/20 max-w-md">
         <DialogHeader>
-          <div className="flex flex-col items-center gap-3 sm:gap-4 py-3 sm:py-4">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-dashboard-green/20 flex items-center justify-center dashboard-glow-green animate-scale-in">
-              <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10 text-dashboard-green-bright" />
+          <div className="flex flex-col items-center gap-4 py-4">
+            <div className="w-16 h-16 rounded-full bg-dashboard-green/20 flex items-center justify-center dashboard-glow-green">
+              <CheckCircle2 className="w-10 h-10 text-dashboard-green-bright" />
             </div>
-            <DialogTitle className="text-xl sm:text-2xl font-bold text-center text-foreground">
+            <DialogTitle className="text-2xl font-bold text-center text-foreground">
               Order Placed Successfully!
             </DialogTitle>
-            <DialogDescription className="text-sm text-center text-muted-foreground">
+            <DialogDescription className="text-center text-muted-foreground">
               Your Free Fire diamonds will be credited shortly
             </DialogDescription>
           </div>
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="p-3 sm:p-4 rounded-lg bg-background/50 border border-border text-center">
-            <p className="text-xs sm:text-sm text-muted-foreground mb-1">Order Reference</p>
-            <p className="text-base sm:text-lg font-mono font-semibold text-primary break-all">{orderId}</p>
+          <div className="p-4 rounded-lg bg-background/50 border border-border text-center">
+            <p className="text-sm text-muted-foreground mb-1">Order Reference</p>
+            <p className="text-lg font-mono font-semibold text-primary">{orderId}</p>
           </div>
 
           <div className="flex flex-col gap-2">
             <Button
               onClick={() => navigate('/dashboard')}
-              className="w-full h-11 sm:h-10 bg-gradient-to-r from-primary to-secondary hover:opacity-90 active:scale-95 transition-all text-sm sm:text-base"
+              className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
             >
               View My Orders
             </Button>
@@ -55,13 +55,13 @@ export const SuccessModal = ({ isOpen, onClose, orderId, onTopUpAgain }: Success
                 onTopUpAgain();
               }}
               variant="outline"
-              className="w-full h-11 sm:h-10 active:scale-95 transition-all text-sm sm:text-base"
+              className="w-full"
             >
               Top Up Again
             </Button>
           </div>
 
-          <p className="text-xs text-center text-muted-foreground px-2">
+          <p className="text-xs text-center text-muted-foreground">
             💡 Tip: You can track your order status in the Dashboard
           </p>
         </div>

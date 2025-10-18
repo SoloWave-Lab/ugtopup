@@ -58,12 +58,12 @@ const PackageSection = ({
 export const PackageSelector = ({ selectedPackage, onSelectPackage }: PackageSelectorProps) => {
   return (
     <div className="space-y-4">
-      <h2 className="text-xl sm:text-2xl font-bold text-foreground">Select Package</h2>
+      <h2 className="text-2xl font-bold text-foreground">Select Package</h2>
       
       <Accordion type="multiple" defaultValue={["diamonds"]} className="space-y-3">
         <AccordionItem value="diamonds" className="border border-border rounded-lg bg-card/50 px-4">
           <AccordionTrigger className="hover:no-underline">
-            <span className="text-base sm:text-lg font-semibold">💎 Diamond Packages ({diamondPackages.length})</span>
+            <span className="text-lg font-semibold">💎 Diamond Packages ({diamondPackages.length})</span>
           </AccordionTrigger>
           <AccordionContent className="pt-4">
             <PackageSection
@@ -76,7 +76,7 @@ export const PackageSelector = ({ selectedPackage, onSelectPackage }: PackageSel
 
         <AccordionItem value="subscriptions" className="border border-border rounded-lg bg-card/50 px-4">
           <AccordionTrigger className="hover:no-underline">
-            <span className="text-base sm:text-lg font-semibold">🗓️ Subscription Packages ({subscriptionPackages.length})</span>
+            <span className="text-lg font-semibold">🗓️ Subscription Packages ({subscriptionPackages.length})</span>
           </AccordionTrigger>
           <AccordionContent className="pt-4">
             <PackageSection
@@ -89,7 +89,7 @@ export const PackageSelector = ({ selectedPackage, onSelectPackage }: PackageSel
 
         <AccordionItem value="zone" className="border border-border rounded-lg bg-card/50 px-4">
           <AccordionTrigger className="hover:no-underline">
-            <span className="text-base sm:text-lg font-semibold">⚔️ Zone Packages ({zonePackages.length})</span>
+            <span className="text-lg font-semibold">⚔️ Zone Packages ({zonePackages.length})</span>
           </AccordionTrigger>
           <AccordionContent className="pt-4">
             <PackageSection
@@ -102,7 +102,7 @@ export const PackageSelector = ({ selectedPackage, onSelectPackage }: PackageSel
 
         <AccordionItem value="passes" className="border border-border rounded-lg bg-card/50 px-4">
           <AccordionTrigger className="hover:no-underline">
-            <span className="text-base sm:text-lg font-semibold">🎟️ Special Passes ({specialPassPackages.length})</span>
+            <span className="text-lg font-semibold">🎟️ Special Passes ({specialPassPackages.length})</span>
           </AccordionTrigger>
           <AccordionContent className="pt-4">
             <PackageSection

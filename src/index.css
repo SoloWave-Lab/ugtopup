@@ -7,15 +7,6 @@ All colors MUST be HSL.
 */
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  
-  body {
-    @apply bg-background text-foreground;
-    font-family: 'Poppins', 'Inter', system-ui, sans-serif;
-  }
-
   :root {
     --background: 0 0% 4%;
     --foreground: 0 0% 98%;
@@ -173,48 +164,17 @@ All colors MUST be HSL.
     }
   }
   
-  .story-link * {
-    @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
+  .animate-scale-in {
+    animation: scale-in 0.2s ease-out;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
   }
 
-  .hover-scale {
-    @apply transition-transform duration-200 hover:scale-105;
-  }
-
-  /* Mobile-first utility classes */
-  .touch-target {
-    @apply min-h-[44px] min-w-[44px];
-  }
-
-  .mobile-input {
-    @apply h-12 text-base;
-  }
-
-  @media (max-width: 640px) {
-    input, textarea, select {
-      font-size: 16px !important; /* Prevents iOS zoom */
-    }
-  }
-
-  /* Premium Typography Utilities */
-  .heading-premium {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-  }
-
-  .label-premium {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-  }
-
-  .price-premium {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 800;
-    letter-spacing: -0.01em;
+  body {
+    @apply bg-background text-foreground;
   }
 }
