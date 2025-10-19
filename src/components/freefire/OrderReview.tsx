@@ -37,35 +37,32 @@ export const OrderReview = ({
     <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent className="bg-card/95 backdrop-blur-xl border-primary/30 max-w-lg shadow-[0_0_50px_rgba(255,0,0,0.3)]">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-2xl sm:text-3xl font-extrabold text-foreground">
-            Order Summary
+          <AlertDialogTitle className="text-xl sm:text-2xl font-semibold text-foreground font-heading">
+            Review Your Order
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-muted-foreground text-base">
-            Review your order details before purchase
-          </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <div className="space-y-5 py-6">
+        <div className="space-y-4 py-4">
           <div className="p-5 rounded-xl bg-background/70 border border-border/50 space-y-4">
-            {/* Order Number - Prominent */}
-            <div className="flex justify-between items-center pb-4 border-b-2 border-primary/20">
-              <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                Order Number
+            {/* Order ID - Compact and Highlighted */}
+            <div className="flex justify-between items-center pb-4 border-b border-primary/20">
+              <span className="text-sm font-medium text-[#B0B0B0]">
+                Order ID
               </span>
-              <span className="text-lg font-mono font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg">
+              <span className="text-base font-bold text-primary bg-primary/15 px-4 py-1.5 rounded-md">
                 {orderId}
               </span>
             </div>
 
             {/* Selected Package - Highlighted */}
             <div className="flex justify-between items-center pb-4 border-b border-border/50">
-              <span className="text-sm font-medium text-muted-foreground">
+              <span className="text-sm font-medium text-[#B0B0B0]">
                 Selected Package
               </span>
               <div className="text-right">
-                <p className="text-base font-bold text-foreground">{selectedPackage.name}</p>
-                <p className="text-sm text-muted-foreground flex items-center justify-end gap-1">
-                  <span className="text-lg">💎</span> {selectedPackage.quantity}
+                <p className="text-base font-bold text-white">{selectedPackage.quantity} Diamonds</p>
+                <p className="text-sm text-[#B0B0B0] flex items-center justify-end gap-1">
+                  <span className="text-base">💎</span> {selectedPackage.quantity}
                 </p>
               </div>
             </div>
@@ -73,16 +70,16 @@ export const OrderReview = ({
             {/* Game Details */}
             <div className="space-y-3 pb-4 border-b border-border/50">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">In-Game UID</span>
-                <span className="text-sm font-mono font-semibold text-foreground">
+                <span className="text-sm font-medium text-[#B0B0B0]">In-Game UID</span>
+                <span className="text-sm font-bold text-white">
                   {formData.uid}
                 </span>
               </div>
 
               {formData.username && (
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Username</span>
-                  <span className="text-sm font-semibold text-foreground">
+                  <span className="text-sm font-medium text-[#B0B0B0]">Username</span>
+                  <span className="text-sm font-bold text-white">
                     {formData.username}
                   </span>
                 </div>
@@ -90,30 +87,39 @@ export const OrderReview = ({
 
               {formData.whatsapp && (
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">WhatsApp</span>
-                  <span className="text-sm font-mono font-semibold text-foreground">
+                  <span className="text-sm font-medium text-[#B0B0B0]">WhatsApp</span>
+                  <span className="text-sm font-bold text-white">
                     {formData.whatsapp}
+                  </span>
+                </div>
+              )}
+
+              {user?.email && (
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-[#B0B0B0]">Email</span>
+                  <span className="text-sm font-bold text-white">
+                    {user.email}
                   </span>
                 </div>
               )}
             </div>
 
             {/* Price Breakdown */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center pt-3">
-                <span className="text-base font-bold text-foreground">Total Price</span>
-                <span className="text-3xl font-extrabold text-primary">
+            <div className="space-y-3 pt-2">
+              <div className="flex justify-between items-center">
+                <span className="text-base font-bold text-white">Total Price</span>
+                <span className="text-2xl font-extrabold text-primary">
                   ₹{selectedPackage.price}
                 </span>
               </div>
 
               <div className="flex justify-between items-center text-sm bg-background/50 p-3 rounded-lg">
-                <span className="text-muted-foreground">Current Balance</span>
-                <span className="font-bold text-foreground">₹{user?.balance || 0}</span>
+                <span className="text-[#B0B0B0]">Current Balance</span>
+                <span className="font-bold text-white">₹{user?.balance || 0}</span>
               </div>
 
               <div className="flex justify-between items-center text-sm bg-background/50 p-3 rounded-lg">
-                <span className="text-muted-foreground">After Purchase</span>
+                <span className="text-[#B0B0B0]">After Purchase</span>
                 <span className={
                   (user?.balance || 0) - selectedPackage.price >= 0 
                     ? "font-bold text-dashboard-green-bright" 

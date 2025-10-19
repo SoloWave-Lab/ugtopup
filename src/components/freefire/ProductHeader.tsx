@@ -2,7 +2,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { AccountDropdown } from "@/components/AccountDropdown";
 import { Link } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
-import ffIcon from "@/assets/ff-icon.png";
+import ffLogo from "@/assets/ff-logo.jpg";
 
 export const ProductHeader = () => {
   const { user } = useAuth();
@@ -20,13 +20,13 @@ export const ProductHeader = () => {
               <span className="text-sm">Back</span>
             </Link>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden">
-                <img 
-                  src={ffIcon} 
-                  alt="Free Fire" 
-                  className="w-8 h-8 object-contain"
-                />
-              </div>
+            <div className="w-12 h-12 rounded-lg overflow-hidden">
+              <img 
+                src={ffLogo} 
+                alt="Free Fire" 
+                className="w-full h-full object-cover"
+              />
+            </div>
               <div>
                 <h1 className="text-xl font-bold text-foreground">Free Fire Diamond</h1>
                 <p className="text-xs text-muted-foreground">UID Diamond Top-Up</p>

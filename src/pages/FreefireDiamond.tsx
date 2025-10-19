@@ -31,6 +31,16 @@ const FreefireDiamond = () => {
     );
   };
 
+  const generateShortOrderId = () => {
+    // Get current order counter from localStorage
+    const currentCount = parseInt(localStorage.getItem('orderCounter') || '0', 10);
+    const newCount = currentCount + 1;
+    localStorage.setItem('orderCounter', newCount.toString());
+    
+    // Format as ORD-XXX (3 digits)
+    return `ORD-${newCount.toString().padStart(3, '0')}`;
+  };
+
   const handleReviewOrder = () => {
     if (!user) {
       toast({
@@ -60,7 +70,7 @@ const FreefireDiamond = () => {
       return;
     }
 
-    const newOrderId = `FF-${Date.now()}`;
+    const newOrderId = generateShortOrderId();
     setOrderId(newOrderId);
     setIsReviewOpen(true);
   };
