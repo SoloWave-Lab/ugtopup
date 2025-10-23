@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import qrCode from "@/assets/ug-gaming-topup-qr.jpg";
+import { saveCreditRequest, generateRequestId } from "@/lib/creditRequestStorage";
 
 interface TopUpModalProps {
   open: boolean;
@@ -53,8 +54,15 @@ export const TopUpModal = ({ open, onOpenChange, onSuccess }: TopUpModalProps) =
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!amount || parseFloat(amount) < 1) {
+    const amountNum = parseFloat(amount);
+    
+    if (!amount || amountNum < 1) {
       toast.error("Please enter a valid amount (minimum Rs.1)");
+      return;
+    }
+
+    if (amountNum > 100000) {
+      toast.error("Maximum amount is Rs.100,000");
       return;
     }
     
@@ -79,25 +87,61 @@ export const TopUpModal = ({ open, onOpenChange, onSuccess }: TopUpModalProps) =
         .from('payment-screenshots')
         .upload(fileName, screenshot);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        toast.error("Failed to upload screenshot. Please try again.");
+        throw uploadError;
+      }
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('payment-screenshots')
         .getPublicUrl(fileName);
 
-      // Call edge function to submit request
-      const { data, error } = await supabase.functions.invoke('submit-credit-request', {
-        body: {
-          amount: parseFloat(amount),
-          screenshot_url: publicUrl,
-          user_name: profile.full_name || profile.username || 'User',
-          user_email: profile.email,
-          remarks: remarks || undefined
-        }
+      // Prepare webhook payload
+      const requestId = generateRequestId();
+      const webhookPayload = {
+        request_id: requestId,
+        user_id: user.id,
+        user_name: profile.full_name || profile.username || 'User',
+        user_email: profile.email,
+        amount: amountNum,
+        credits: amountNum, // 1:1 ratio
+        screenshot_url: publicUrl,
+        remarks: remarks || '',
+        timestamp: new Date().toISOString(),
+        status: 'pending',
+        username: profile.username || '',
+        avatar_url: profile.avatar_url || '',
+      };
+
+      // Save to localStorage immediately
+      saveCreditRequest({
+        id: requestId,
+        user_id: user.id,
+        user_name: webhookPayload.user_name,
+        user_email: webhookPayload.user_email,
+        amount: amountNum,
+        credits: amountNum,
+        status: 'pending',
+        screenshot_url: publicUrl,
+        created_at: new Date().toISOString(),
+        remarks: remarks || undefined,
       });
 
-      if (error) throw error;
+      // Send to webhook
+      const webhookUrl = 'https://n8n.aiagentra.com/webhook/payment-pending';
+      const webhookResponse = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(webhookPayload),
+      });
+
+      if (!webhookResponse.ok) {
+        console.warn('Webhook returned non-OK status:', webhookResponse.status);
+        // We still continue since it's saved locally
+      }
 
       toast.success("Credit request submitted successfully! Status: Pending");
       
@@ -163,6 +207,7 @@ export const TopUpModal = ({ open, onOpenChange, onSuccess }: TopUpModalProps) =
               id="amount"
               type="number"
               min="1"
+              max="100000"
               step="1"
               placeholder="Enter amount"
               value={amount}
@@ -170,9 +215,16 @@ export const TopUpModal = ({ open, onOpenChange, onSuccess }: TopUpModalProps) =
               required
               className="bg-background/50 border-border focus:border-primary"
             />
-            <p className="text-xs text-muted-foreground">
-              Rs.1 = 1 Credit
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">
+                Rs.1 = 1 Credit
+              </p>
+              {amount && parseFloat(amount) > 0 && (
+                <p className="text-sm font-semibold text-primary animate-fade-in">
+                  ₹{amount} = {amount} Credits
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Screenshot Upload */}

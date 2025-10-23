@@ -1,47 +1,28 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
 import { Clock, CheckCircle2, XCircle } from "lucide-react";
 import { format } from "date-fns";
-
-interface CreditRequest {
-  id: string;
-  amount: number;
-  status: 'pending' | 'approved' | 'rejected';
-  created_at: string;
-  payment_screenshot_url?: string;
-  remarks?: string;
-}
+import { getCreditRequests, type LocalCreditRequest } from "@/lib/creditRequestStorage";
 
 export const CreditRequestHistory = () => {
-  const { user } = useAuth();
-  const [requests, setRequests] = useState<CreditRequest[]>([]);
+  const [requests, setRequests] = useState<LocalCreditRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchRequests = async () => {
-    if (!user) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('credit_requests' as any)
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (error) throw error;
-      setRequests((data as any) || []);
-    } catch (error) {
-      console.error('Error fetching credit requests:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchRequests();
-  }, [user]);
+    // Load from localStorage
+    const loadRequests = () => {
+      try {
+        const localRequests = getCreditRequests();
+        setRequests(localRequests);
+      } catch (error) {
+        console.error('Error loading credit requests:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRequests();
+  }, []);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
