@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Header } from "@/components/Header";
 import { UserProfileCard } from "@/components/dashboard/UserProfileCard";
@@ -5,11 +6,15 @@ import { StatisticsCard } from "@/components/dashboard/StatisticsCard";
 import { CreditBalanceCard } from "@/components/dashboard/CreditBalanceCard";
 import { EmptyStateCard } from "@/components/dashboard/EmptyStateCard";
 import { TrustBadges } from "@/components/dashboard/TrustBadges";
+import { CreditRequestHistory } from "@/components/topup/CreditRequestHistory";
+import { TopUpModal } from "@/components/topup/TopUpModal";
 import { CreditCard, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 
 const Dashboard = () => {
   const { user, profile } = useAuth();
+  const [topUpModalOpen, setTopUpModalOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // Extract username from profile or email
   const username = profile?.username || profile?.full_name || user?.email?.split('@')[0] || 'User';
@@ -21,9 +26,12 @@ const Dashboard = () => {
   const pendingTopUps = 0;
 
   const handleTopUpClick = () => {
-    toast.info("Top-up feature coming soon!", {
-      description: "You'll be able to add credits to your wallet"
-    });
+    setTopUpModalOpen(true);
+  };
+
+  const handleTopUpSuccess = () => {
+    setRefreshKey(prev => prev + 1);
+    toast.success("Credit request submitted successfully!");
   };
 
   return (
@@ -64,15 +72,9 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Top-Up History */}
+        {/* Credit Request History */}
         <div className="mb-6 animate-fade-in" style={{ animationDelay: '300ms' }}>
-          <EmptyStateCard 
-            title="Top-Up History"
-            total={topUps}
-            icon={<CreditCard className="h-10 w-10 text-green-500" />}
-            emptyTitle="No top-up requests yet"
-            emptySubtitle="Start by adding credits to your account"
-          />
+          <CreditRequestHistory key={refreshKey} />
         </div>
 
         {/* Order History */}
@@ -91,6 +93,13 @@ const Dashboard = () => {
           <TrustBadges />
         </div>
       </main>
+
+      {/* Top-Up Modal */}
+      <TopUpModal 
+        open={topUpModalOpen}
+        onOpenChange={setTopUpModalOpen}
+        onSuccess={handleTopUpSuccess}
+      />
     </div>
   );
 };

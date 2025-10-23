@@ -12,8 +12,8 @@ export const CreditBalanceCard = ({ balance, onTopUpClick }: CreditBalanceCardPr
     <Card className="bg-card border-border dashboard-card-hover">
       <CardHeader className="flex flex-row items-center justify-between pb-4">
         <CardTitle className="text-xl font-semibold">Credit Balance</CardTitle>
-        <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-          <Wallet className="h-5 w-5 text-green-500" />
+        <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+          <Wallet className="h-5 w-5 text-primary" />
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -28,7 +28,7 @@ export const CreditBalanceCard = ({ balance, onTopUpClick }: CreditBalanceCardPr
         
         <Button 
           onClick={onTopUpClick}
-          className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-6 text-base rounded-lg transition-all duration-300 hover:scale-[1.02] dashboard-glow-green-strong shadow-lg"
+          className="w-full topup-submit-button text-white font-semibold py-6 text-base rounded-lg transition-all duration-300 hover:scale-[1.02] shadow-lg"
         >
           + Top-Up
         </Button>

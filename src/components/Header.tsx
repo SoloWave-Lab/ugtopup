@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Menu, Plus } from "lucide-react";
 import { useState } from "react";
+import { TopUpModal } from "./topup/TopUpModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export const Header = () => {
   const { isAuthenticated, profile, user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [topUpModalOpen, setTopUpModalOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-black/95 backdrop-blur-lg border-b border-white/5">
@@ -44,6 +46,7 @@ export const Header = () => {
                 <Button
                   size="icon"
                   className="neon-button h-10 w-10 rounded-xl"
+                  onClick={() => setTopUpModalOpen(true)}
                 >
                   <Plus className="h-5 w-5" />
                 </Button>
@@ -159,6 +162,13 @@ export const Header = () => {
           </div>
         </div>
       )}
+
+      {/* Top-Up Modal */}
+      <TopUpModal 
+        open={topUpModalOpen}
+        onOpenChange={setTopUpModalOpen}
+        onSuccess={() => setTopUpModalOpen(false)}
+      />
     </header>
   );
 };
