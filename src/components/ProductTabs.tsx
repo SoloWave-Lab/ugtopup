@@ -21,9 +21,9 @@ const productData = {
     { id: 4, title: "Roblox Robux Top-Ups", image: gameRoblox },
   ],
   voucher: [
-    { id: 1, title: "UNIPIN 2000 UC POINT", image: productUnipin },
+    { id: 1, title: "UNIPIN 2000 UC POINT", image: productUnipin, link: "/product/unipin-uc" },
     { id: 2, title: "GARENA SHELL 1300 RGG", image: productGarena },
-    { id: 3, title: "1000 SMILE COIN", image: productSmile },
+    { id: 3, title: "1000 SMILE COIN", image: productSmile, link: "/product/smile-coin" },
   ],
   subscription: [
     { id: 1, title: "Netflix Subscription", image: productNetflix },
@@ -98,6 +98,7 @@ export const ProductTabs = () => {
                 key={product.id}
                 image={product.image}
                 title={product.title}
+                link={product.link}
                 onBuyNow={() => handleBuyNow(product.title)}
               />
             ))}
