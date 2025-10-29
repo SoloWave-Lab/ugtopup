@@ -1,5 +1,6 @@
 import { Header } from "@/components/Header";
 import { HeroBanner } from "@/components/HeroBanner";
+import { OpeningHours } from "@/components/OpeningHours";
 import { BestDeals } from "@/components/BestDeals";
 import { ProductTabs } from "@/components/ProductTabs";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
@@ -16,6 +17,9 @@ const Index = () => {
         <section className="container mx-auto px-4 pt-8 pb-4">
           <HeroBanner />
         </section>
+
+        {/* Opening Hours */}
+        <OpeningHours />
 
         {/* Best Deals Banner */}
         <BestDeals />
