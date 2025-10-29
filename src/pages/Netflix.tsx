@@ -35,7 +35,7 @@ const Netflix = () => {
   const handleConfirmPurchase = () => {
     if (!selectedPackage || !formData || !profile) return;
 
-    const newBalance = profile.credits - selectedPackage.price;
+    const newBalance = profile.balance - selectedPackage.price;
     
     if (newBalance < 0) {
       toast.error("Insufficient balance");
@@ -59,7 +59,7 @@ const Netflix = () => {
     
     window.dispatchEvent(new Event("storage"));
 
-    setProfile({ ...profile, credits: newBalance });
+    setProfile({ ...profile, balance: newBalance });
 
     setShowOrderReview(false);
     setShowSuccessModal(true);

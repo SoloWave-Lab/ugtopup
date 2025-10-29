@@ -63,7 +63,7 @@ export const SmileCoinOrderReview = ({
               <span className="text-sm font-medium text-muted-foreground">Selected Package</span>
               <div className="text-right">
                 <p className="text-base font-bold text-foreground">{selectedPackage.name}</p>
-                <p className="text-sm text-primary">😊 {selectedPackage.quantity.toLocaleString()} Coins</p>
+                <p className="text-sm text-primary">{selectedPackage.quantity.toLocaleString()} Coins</p>
               </div>
             </div>
 
@@ -110,10 +110,9 @@ export const SmileCoinOrderReview = ({
           </div>
 
           {hasInsufficientBalance && (
-            <div className="p-4 rounded-xl bg-destructive/10 border-2 border-destructive/30 animate-pulse">
-              <p className="text-sm font-semibold text-destructive flex items-center gap-2">
-                <span className="text-xl">⚠️</span>
-                Insufficient credits. Please add credits to continue.
+            <div className="p-4 rounded-xl bg-destructive/10 border-2 border-destructive/30">
+              <p className="text-sm font-semibold text-destructive">
+                Insufficient balance. Please add credits to continue.
               </p>
             </div>
           )}

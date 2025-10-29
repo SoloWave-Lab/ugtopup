@@ -18,6 +18,7 @@ import SmileCoin from "./pages/SmileCoin";
 import ChatGPT from "./pages/ChatGPT";
 import YouTube from "./pages/YouTube";
 import Netflix from "./pages/Netflix";
+import GarenaShell from "./pages/GarenaShell";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/product/chatgpt-plus" element={<ChatGPT />} />
             <Route path="/product/youtube-premium" element={<YouTube />} />
             <Route path="/product/netflix" element={<Netflix />} />
+            <Route path="/product/garena-shell" element={<GarenaShell />} />
             <Route
               path="/dashboard" 
               element={

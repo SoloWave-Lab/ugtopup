@@ -45,8 +45,10 @@ export const UnipinUserInputForm = ({ onDataChange, initialData }: UnipinUserInp
 
   return (
     <Card className="p-6 glass-card border-border/50">
-      <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-        <span className="text-2xl">1️⃣</span>
+      <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-3">
+        <span className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-lg">
+          1
+        </span>
         Enter Details
       </h2>
 

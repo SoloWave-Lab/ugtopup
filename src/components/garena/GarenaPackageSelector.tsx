@@ -1,13 +1,13 @@
 import { Card } from "@/components/ui/card";
 import { Check } from "lucide-react";
-import { smileCoinPackages, SmileCoinPackage } from "@/data/smileCoinPackages";
+import { garenaPackages, GarenaPackage } from "@/data/garenaPackages";
 
-interface SmileCoinPackageSelectorProps {
-  selectedPackage: SmileCoinPackage | null;
-  onSelectPackage: (pkg: SmileCoinPackage) => void;
+interface GarenaPackageSelectorProps {
+  selectedPackage: GarenaPackage | null;
+  onSelectPackage: (pkg: GarenaPackage) => void;
 }
 
-export const SmileCoinPackageSelector = ({ selectedPackage, onSelectPackage }: SmileCoinPackageSelectorProps) => {
+export const GarenaPackageSelector = ({ selectedPackage, onSelectPackage }: GarenaPackageSelectorProps) => {
   return (
     <Card className="p-6 glass-card border-border/50">
       <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-3">
@@ -18,7 +18,7 @@ export const SmileCoinPackageSelector = ({ selectedPackage, onSelectPackage }: S
       </h2>
 
       <div className="grid grid-cols-1 gap-4">
-        {smileCoinPackages.map((pkg) => (
+        {garenaPackages.map((pkg) => (
           <Card
             key={pkg.id}
             onClick={() => onSelectPackage(pkg)}
@@ -31,14 +31,14 @@ export const SmileCoinPackageSelector = ({ selectedPackage, onSelectPackage }: S
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-lg bg-primary/15 flex items-center justify-center">
-                  <span className="text-xl font-bold text-primary">SC</span>
+                  <span className="text-xl font-bold text-primary">GS</span>
                 </div>
                 <div>
                   <p className="font-bold text-foreground text-base">{pkg.name}</p>
                   <p className={`text-sm font-semibold mt-1 ${
                     selectedPackage?.id === pkg.id ? "text-primary" : "text-muted-foreground"
                   }`}>
-                    {pkg.quantity.toLocaleString()} Smile Coins
+                    {pkg.quantity.toLocaleString()} Garena Shells
                   </p>
                 </div>
               </div>

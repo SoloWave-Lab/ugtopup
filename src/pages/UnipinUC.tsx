@@ -155,9 +155,9 @@ const UnipinUC = () => {
             className="w-full h-16 text-lg font-bold bg-gradient-to-r from-primary via-red-600 to-secondary hover:opacity-90 hover:shadow-[0_0_40px_rgba(255,0,0,0.6)] transition-all duration-300 disabled:opacity-50"
           >
             {!isFormValid
-              ? "📧 Enter Your Email"
+              ? "Enter Your Email"
               : !selectedPackage
-              ? "📦 Select a Package"
+              ? "Select a Voucher Package"
               : `Buy Now - ₹${selectedPackage.price.toLocaleString()}`}
           </Button>
         </div>

@@ -10,9 +10,11 @@ interface UnipinPackageSelectorProps {
 export const UnipinPackageSelector = ({ selectedPackage, onSelectPackage }: UnipinPackageSelectorProps) => {
   return (
     <Card className="p-6 glass-card border-border/50">
-      <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-        <span className="text-2xl">2️⃣</span>
-        Top-Up Amount
+      <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-3">
+        <span className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-lg">
+          2
+        </span>
+        Voucher Amount
       </h2>
 
       <div className="grid grid-cols-1 gap-4">
@@ -29,7 +31,7 @@ export const UnipinPackageSelector = ({ selectedPackage, onSelectPackage }: Unip
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-lg bg-primary/15 flex items-center justify-center">
-                  <span className="text-2xl">🎮</span>
+                  <span className="text-xl font-bold text-primary">UC</span>
                 </div>
                 <div>
                   <p className="font-bold text-foreground text-base">{pkg.name}</p>

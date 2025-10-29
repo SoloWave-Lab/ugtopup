@@ -34,7 +34,7 @@ export const YouTubeOrderReview = ({
 
   if (!selectedPackage || !formData) return null;
 
-  const currentBalance = profile?.credits || 0;
+  const currentBalance = profile?.balance || 0;
   const totalPrice = selectedPackage.price;
   const balanceAfter = currentBalance - totalPrice;
   const hasInsufficientBalance = balanceAfter < 0;

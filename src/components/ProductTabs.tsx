@@ -21,9 +21,9 @@ const productData = {
     { id: 4, title: "Roblox Robux Top-Ups", image: gameRoblox },
   ],
   voucher: [
-    { id: 1, title: "UNIPIN 2000 UC POINT", image: productUnipin, link: "/product/unipin-uc" },
-    { id: 2, title: "GARENA SHELL 1300 RGG", image: productGarena },
-    { id: 3, title: "1000 SMILE COIN", image: productSmile, link: "/product/smile-coin" },
+    { id: 1, title: "Unipin UC", image: productUnipin, link: "/product/unipin-uc" },
+    { id: 2, title: "Smile Coin", image: productSmile, link: "/product/smile-coin" },
+    { id: 3, title: "Garena Shell", image: productGarena, link: "/product/garena-shell" },
   ],
   subscription: [
     { id: 1, title: "ChatGPT Plus", image: productCapcut, link: "/product/chatgpt-plus" },

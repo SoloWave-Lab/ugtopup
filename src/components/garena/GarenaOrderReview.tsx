@@ -8,27 +8,27 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { UnipinPackage } from "@/data/unipinPackages";
-import { UnipinFormData } from "./UnipinUserInputForm";
+import { GarenaPackage } from "@/data/garenaPackages";
+import { GarenaFormData } from "./GarenaUserInputForm";
 import { useAuth } from "@/contexts/AuthContext";
 
-interface UnipinOrderReviewProps {
+interface GarenaOrderReviewProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  selectedPackage: UnipinPackage | null;
-  formData: UnipinFormData | null;
+  selectedPackage: GarenaPackage | null;
+  formData: GarenaFormData | null;
   orderId: string;
 }
 
-export const UnipinOrderReview = ({
+export const GarenaOrderReview = ({
   isOpen,
   onClose,
   onConfirm,
   selectedPackage,
   formData,
   orderId,
-}: UnipinOrderReviewProps) => {
+}: GarenaOrderReviewProps) => {
   const { user, profile } = useAuth();
 
   if (!selectedPackage || !formData) return null;
@@ -63,12 +63,12 @@ export const UnipinOrderReview = ({
               <span className="text-sm font-medium text-muted-foreground">Selected Package</span>
               <div className="text-right">
                 <p className="text-base font-bold text-foreground">{selectedPackage.name}</p>
-                <p className="text-sm text-primary">{selectedPackage.quantity.toLocaleString()} UC Points</p>
+                <p className="text-sm text-primary">{selectedPackage.quantity.toLocaleString()} Shells</p>
               </div>
             </div>
 
             <div className="flex justify-between items-center pt-2 border-t border-border/30">
-              <span className="text-sm font-medium text-muted-foreground">Email ID</span>
+              <span className="text-sm font-medium text-muted-foreground">Email Address</span>
               <span className="text-sm font-semibold text-foreground">{formData.email}</span>
             </div>
 

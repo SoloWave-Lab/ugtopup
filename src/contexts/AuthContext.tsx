@@ -11,7 +11,6 @@ interface Profile {
   full_name?: string;
   avatar_url?: string;
   balance: number;
-  credits: number;
   provider?: string;
 }
 

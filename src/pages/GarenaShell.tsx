@@ -2,27 +2,27 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { SmileCoinProductHeader } from "@/components/smilecoin/SmileCoinProductHeader";
-import { SmileCoinUserInputForm, SmileCoinFormData } from "@/components/smilecoin/SmileCoinUserInputForm";
-import { SmileCoinPackageSelector } from "@/components/smilecoin/SmileCoinPackageSelector";
-import { SmileCoinOrderReview } from "@/components/smilecoin/SmileCoinOrderReview";
-import { SmileCoinSuccessModal } from "@/components/smilecoin/SmileCoinSuccessModal";
-import { SmileCoinPackage } from "@/data/smileCoinPackages";
+import { GarenaProductHeader } from "@/components/garena/GarenaProductHeader";
+import { GarenaUserInputForm, GarenaFormData } from "@/components/garena/GarenaUserInputForm";
+import { GarenaPackageSelector } from "@/components/garena/GarenaPackageSelector";
+import { GarenaOrderReview } from "@/components/garena/GarenaOrderReview";
+import { GarenaSuccessModal } from "@/components/garena/GarenaSuccessModal";
+import { GarenaPackage } from "@/data/garenaPackages";
 import { Button } from "@/components/ui/button";
 
-const SmileCoin = () => {
+const GarenaShell = () => {
   const { user, profile, updateProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState<SmileCoinFormData | null>(null);
+  const [formData, setFormData] = useState<GarenaFormData | null>(null);
   const [isFormValid, setIsFormValid] = useState(false);
-  const [selectedPackage, setSelectedPackage] = useState<SmileCoinPackage | null>(null);
+  const [selectedPackage, setSelectedPackage] = useState<GarenaPackage | null>(null);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [orderId, setOrderId] = useState("");
 
-  const handleFormDataChange = (data: SmileCoinFormData | null, isValid: boolean) => {
+  const handleFormDataChange = (data: GarenaFormData | null, isValid: boolean) => {
     setFormData(data);
     setIsFormValid(isValid && !!data?.email);
   };
@@ -57,7 +57,7 @@ const SmileCoin = () => {
     if (!selectedPackage) {
       toast({
         title: "Please select a package",
-        description: "Choose a Smile Coin package to continue",
+        description: "Choose a Garena Shell package to continue",
         variant: "destructive",
       });
       return;
@@ -90,7 +90,7 @@ const SmileCoin = () => {
 
       const order = {
         id: orderId,
-        product: "Smile Coin",
+        product: "Garena Shell",
         package: selectedPackage.name,
         quantity: selectedPackage.quantity,
         price: totalPrice,
@@ -108,7 +108,7 @@ const SmileCoin = () => {
       setIsSuccessOpen(true);
 
       toast({
-        title: "Purchase Successful! 🎉",
+        title: "Purchase Successful!",
         description: `Your order ${orderId} has been placed successfully.`,
       });
     } catch (error) {
@@ -131,16 +131,16 @@ const SmileCoin = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SmileCoinProductHeader />
+      <GarenaProductHeader />
       
       <main className="container mx-auto px-4 py-6 pb-32">
         <div className="max-w-4xl mx-auto space-y-6">
-          <SmileCoinUserInputForm 
+          <GarenaUserInputForm 
             onDataChange={handleFormDataChange}
             initialData={formData || undefined}
           />
 
-          <SmileCoinPackageSelector
+          <GarenaPackageSelector
             selectedPackage={selectedPackage}
             onSelectPackage={setSelectedPackage}
           />
@@ -152,7 +152,7 @@ const SmileCoin = () => {
           <Button
             onClick={handleReviewOrder}
             disabled={!canReviewOrder}
-            className="w-full h-16 text-lg font-bold bg-gradient-to-r from-primary via-red-600 to-secondary hover:opacity-90 hover:shadow-[0_0_40px_rgba(255,0,0,0.6)] transition-all duration-300 disabled:opacity-50"
+            className="w-full h-16 text-lg font-bold bg-gradient-to-r from-primary via-red-600 to-secondary hover:opacity-90 hover:shadow-[0_0_40px_rgba(255,0,0,0.6)] transition-all duration-300 disabled:opacity-40"
           >
             {!isFormValid
               ? "Enter Your Email"
@@ -163,7 +163,7 @@ const SmileCoin = () => {
         </div>
       </div>
 
-      <SmileCoinOrderReview
+      <GarenaOrderReview
         isOpen={isReviewOpen}
         onClose={() => setIsReviewOpen(false)}
         onConfirm={handleConfirmPurchase}
@@ -172,7 +172,7 @@ const SmileCoin = () => {
         orderId={orderId}
       />
 
-      <SmileCoinSuccessModal
+      <GarenaSuccessModal
         isOpen={isSuccessOpen}
         onClose={() => setIsSuccessOpen(false)}
         orderId={orderId}
@@ -182,4 +182,4 @@ const SmileCoin = () => {
   );
 };
 
-export default SmileCoin;
+export default GarenaShell;

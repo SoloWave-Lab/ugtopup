@@ -12,14 +12,14 @@ const formSchema = z.object({
   ),
 });
 
-export type SmileCoinFormData = z.infer<typeof formSchema>;
+export type GarenaFormData = z.infer<typeof formSchema>;
 
-interface SmileCoinUserInputFormProps {
-  onDataChange: (data: SmileCoinFormData | null, isValid: boolean) => void;
-  initialData?: Partial<SmileCoinFormData>;
+interface GarenaUserInputFormProps {
+  onDataChange: (data: GarenaFormData | null, isValid: boolean) => void;
+  initialData?: Partial<GarenaFormData>;
 }
 
-export const SmileCoinUserInputForm = ({ onDataChange, initialData }: SmileCoinUserInputFormProps) => {
+export const GarenaUserInputForm = ({ onDataChange, initialData }: GarenaUserInputFormProps) => {
   const [email, setEmail] = useState(initialData?.email || "");
   const [whatsapp, setWhatsapp] = useState(initialData?.whatsapp || "");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});

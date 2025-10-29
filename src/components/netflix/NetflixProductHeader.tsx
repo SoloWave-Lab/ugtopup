@@ -37,7 +37,7 @@ export const NetflixProductHeader = () => {
             <div className="text-right">
               <div className="text-xs text-muted-foreground">Credits</div>
               <div className="text-sm sm:text-base font-bold text-primary">
-                ₹{profile?.credits?.toLocaleString() || "0"}
+                ₹{profile?.balance?.toLocaleString() || "0"}
               </div>
             </div>
             <AccountDropdown />
