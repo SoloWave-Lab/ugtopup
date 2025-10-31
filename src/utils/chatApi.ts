@@ -36,6 +36,7 @@ export const sendMessageToWebhook = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain;q=0.9, */*;q=0.8'
       },
       body: JSON.stringify({
         message: message.trim(),
@@ -52,11 +53,20 @@ export const sendMessageToWebhook = async (
       throw new Error(`Webhook error: ${response.status}`);
     }
 
-    const data = await response.json();
-    return {
-      reply: data.reply || data.message || data.answer || 'No response received',
-      timestamp: data.timestamp || new Date().toISOString()
-    };
+    const raw = await response.text();
+    try {
+      const data = JSON.parse(raw);
+      return {
+        reply: data.reply ?? data.message ?? data.answer ?? 'No response received',
+        timestamp: data.timestamp ?? new Date().toISOString()
+      };
+    } catch {
+      // Fallback when webhook returns plain text (not JSON)
+      return {
+        reply: raw?.trim() || 'No response received',
+        timestamp: new Date().toISOString()
+      };
+    }
   } catch (error: any) {
     clearTimeout(timeoutId);
     
