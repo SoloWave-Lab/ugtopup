@@ -10,35 +10,100 @@ export interface CreditRequest {
   user_email?: string;
 }
 
-export interface UserCreditData {
+export interface CreditBalance {
   email: string;
-  balance: number;
-  requests: CreditRequest[];
+  credit: number;
 }
 
-const WEBHOOK_URL = 'https://n8n.aiagentra.com/webhook/payment-pending';
+const HISTORY_WEBHOOK = 'https://n8n.aiagentra.com/webhook/payment-pending';
+const BALANCE_WEBHOOK = 'https://n8n.aiagentra.com/webhook/checkcredit';
+const SUBMIT_WEBHOOK = 'https://n8n.aiagentra.com/webhook/payment-pending';
 
 /**
- * Fetch user's credit balance and request history from n8n
+ * Fetch user's credit balance from n8n
  */
-export const fetchUserCredits = async (email: string): Promise<UserCreditData> => {
+export const fetchCreditBalance = async (email: string): Promise<CreditBalance> => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
   try {
-    const response = await fetch(`${WEBHOOK_URL}?email=${encodeURIComponent(email)}`, {
+    const response = await fetch(`${BALANCE_WEBHOOK}?email=${encodeURIComponent(email)}`, {
       method: 'GET',
+      signal: controller.signal,
       headers: {
         'Accept': 'application/json',
       },
     });
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
-      throw new Error(`Failed to fetch credit data: ${response.status}`);
+      throw new Error(`Failed to fetch credit balance: ${response.status}`);
     }
 
     const data = await response.json();
+
+    // Validate email matches
+    if (data.email !== email) {
+      throw new Error('Email mismatch in response');
+    }
+
+    // Validate credit field exists and is a number
+    if (typeof data.credit !== 'number') {
+      throw new Error('Invalid credit value in response');
+    }
+
     return data;
   } catch (error) {
-    console.error('Error fetching user credits:', error);
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Request timeout: Server took too long to respond');
+    }
+    console.error('Error fetching credit balance:', error);
     throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};
+
+/**
+ * Fetch user's credit request history from n8n
+ */
+export const fetchCreditHistory = async (email: string): Promise<CreditRequest[]> => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
+  try {
+    const response = await fetch(`${HISTORY_WEBHOOK}?email=${encodeURIComponent(email)}`, {
+      method: 'GET',
+      signal: controller.signal,
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch credit history: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Ensure we return an array
+    if (!Array.isArray(data)) {
+      console.warn('Credit history response is not an array, returning empty array');
+      return [];
+    }
+
+    return data;
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Request timeout: Server took too long to respond');
+    }
+    console.error('Error fetching credit history:', error);
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
   }
 };
 
@@ -47,7 +112,7 @@ export const fetchUserCredits = async (email: string): Promise<UserCreditData> =
  */
 export const submitCreditRequest = async (formData: FormData): Promise<any> => {
   try {
-    const response = await fetch(WEBHOOK_URL, {
+    const response = await fetch(SUBMIT_WEBHOOK, {
       method: 'POST',
       body: formData,
     });

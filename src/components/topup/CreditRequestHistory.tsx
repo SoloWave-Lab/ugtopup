@@ -43,7 +43,7 @@ export const CreditRequestHistory = ({ requests, loading }: CreditRequestHistory
           <CardTitle className="text-lg">Credit Request History</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">Loading...</p>
+          <p className="text-sm text-muted-foreground">Fetching credit request history…</p>
         </CardContent>
       </Card>
     );
@@ -57,7 +57,7 @@ export const CreditRequestHistory = ({ requests, loading }: CreditRequestHistory
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            No credit requests yet. Click "+ Top-Up" to make your first request.
+            No credit request history found.
           </p>
         </CardContent>
       </Card>

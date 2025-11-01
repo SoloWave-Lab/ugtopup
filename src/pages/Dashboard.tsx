@@ -10,13 +10,15 @@ import { CreditRequestHistory } from "@/components/topup/CreditRequestHistory";
 import { TopUpModal } from "@/components/topup/TopUpModal";
 import { ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
-import { fetchUserCredits, type UserCreditData } from "@/lib/creditApi";
+import { fetchCreditBalance, fetchCreditHistory, type CreditRequest } from "@/lib/creditApi";
 
 const Dashboard = () => {
   const { user, profile } = useAuth();
   const [topUpModalOpen, setTopUpModalOpen] = useState(false);
-  const [creditData, setCreditData] = useState<UserCreditData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [balance, setBalance] = useState(0);
+  const [creditRequests, setCreditRequests] = useState<CreditRequest[]>([]);
+  const [loadingBalance, setLoadingBalance] = useState(true);
+  const [loadingHistory, setLoadingHistory] = useState(true);
 
   // Extract username from profile or email
   const username = profile?.username || profile?.full_name || user?.email?.split('@')[0] || 'User';
@@ -25,31 +27,55 @@ const Dashboard = () => {
   const pendingOrders = 0;
 
   // Calculate stats from credit data
-  const balance = creditData?.balance || 0;
-  const topUps = creditData?.requests.length || 0;
-  const pendingTopUps = creditData?.requests.filter(r => r.status === 'pending').length || 0;
+  const topUps = creditRequests.length;
+  const pendingTopUps = creditRequests.filter(r => r.status === 'pending').length;
 
-  // Fetch data from n8n
+  // Fetch balance from n8n
   useEffect(() => {
-    const loadData = async () => {
+    const loadBalance = async () => {
       if (!user?.email) {
-        setLoading(false);
+        setLoadingBalance(false);
         return;
       }
 
       try {
-        const data = await fetchUserCredits(user.email);
-        setCreditData(data);
+        const data = await fetchCreditBalance(user.email);
+        setBalance(data.credit);
       } catch (error) {
-        console.error('Error loading credit data:', error);
-        toast.error("Failed to load credit data");
+        console.error('Error loading balance:', error);
+        toast.error("Failed to load credit balance");
       } finally {
-        setLoading(false);
+        setLoadingBalance(false);
       }
     };
 
-    loadData(); // Load immediately
-    const interval = setInterval(loadData, 10000); // Refresh every 10 seconds
+    loadBalance(); // Load immediately
+    const interval = setInterval(loadBalance, 10000); // Refresh every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [user?.email]);
+
+  // Fetch credit history from n8n
+  useEffect(() => {
+    const loadHistory = async () => {
+      if (!user?.email) {
+        setLoadingHistory(false);
+        return;
+      }
+
+      try {
+        const requests = await fetchCreditHistory(user.email);
+        setCreditRequests(requests);
+      } catch (error) {
+        console.error('Error loading history:', error);
+        toast.error("Failed to load credit history");
+      } finally {
+        setLoadingHistory(false);
+      }
+    };
+
+    loadHistory(); // Load immediately
+    const interval = setInterval(loadHistory, 10000); // Refresh every 10 seconds
 
     return () => clearInterval(interval);
   }, [user?.email]);
@@ -61,11 +87,15 @@ const Dashboard = () => {
   const handleTopUpSuccess = async () => {
     toast.success("Credit request submitted! Refreshing data...");
     
-    // Immediately refresh data from n8n
+    // Immediately refresh both balance and history from n8n
     if (user?.email) {
       try {
-        const data = await fetchUserCredits(user.email);
-        setCreditData(data);
+        const [balanceData, historyData] = await Promise.all([
+          fetchCreditBalance(user.email),
+          fetchCreditHistory(user.email)
+        ]);
+        setBalance(balanceData.credit);
+        setCreditRequests(historyData);
       } catch (error) {
         console.error('Error refreshing credit data:', error);
       }
@@ -106,6 +136,8 @@ const Dashboard = () => {
         <div className="mb-6 animate-fade-in" style={{ animationDelay: '200ms' }}>
           <CreditBalanceCard 
             balance={balance}
+            email={email}
+            loading={loadingBalance}
             onTopUpClick={handleTopUpClick}
           />
         </div>
@@ -113,8 +145,8 @@ const Dashboard = () => {
         {/* Credit Request History */}
         <div className="mb-6 animate-fade-in" style={{ animationDelay: '300ms' }}>
           <CreditRequestHistory 
-            requests={creditData?.requests || []} 
-            loading={loading}
+            requests={creditRequests} 
+            loading={loadingHistory}
           />
         </div>
 
