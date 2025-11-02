@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [creditRequests, setCreditRequests] = useState<CreditRequest[]>([]);
   const [loadingBalance, setLoadingBalance] = useState(true);
   const [loadingHistory, setLoadingHistory] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Extract username from profile or email
   const username = profile?.username || profile?.full_name || user?.email?.split('@')[0] || 'User';
@@ -33,8 +34,9 @@ const Dashboard = () => {
   // Fetch balance from n8n
   useEffect(() => {
     const loadBalance = async () => {
-      if (!user?.email) {
-        setLoadingBalance(false);
+      if (!user?.email || isRefreshing) {
+        console.log('[DEBUG] Skipping balance fetch - already refreshing or no email');
+        if (!user?.email) setLoadingBalance(false);
         return;
       }
 
@@ -53,13 +55,14 @@ const Dashboard = () => {
     const interval = setInterval(loadBalance, 120000); // Refresh every 2 minutes
 
     return () => clearInterval(interval);
-  }, [user?.email]);
+  }, [user?.email, isRefreshing]);
 
   // Fetch credit history from n8n
   useEffect(() => {
     const loadHistory = async () => {
-      if (!user?.email) {
-        setLoadingHistory(false);
+      if (!user?.email || isRefreshing) {
+        console.log('[DEBUG] Skipping history fetch - already refreshing or no email');
+        if (!user?.email) setLoadingHistory(false);
         return;
       }
 
@@ -78,7 +81,7 @@ const Dashboard = () => {
     const interval = setInterval(loadHistory, 120000); // Refresh every 2 minutes
 
     return () => clearInterval(interval);
-  }, [user?.email]);
+  }, [user?.email, isRefreshing]);
 
   const handleTopUpClick = () => {
     setTopUpModalOpen(true);
@@ -87,17 +90,26 @@ const Dashboard = () => {
   const handleTopUpSuccess = async () => {
     toast.success("Credit request submitted! Refreshing data...");
     
-    // Immediately refresh both balance and history from n8n
+    // Sequential refresh: balance first, then history (wait for webhook to respond)
     if (user?.email) {
+      setIsRefreshing(true);
       try {
-        const [balanceData, historyData] = await Promise.all([
-          fetchCreditBalance(user.email),
-          fetchCreditHistory(user.email)
-        ]);
+        // Wait for balance to complete first
+        console.log('[DEBUG] Refreshing balance first...');
+        const balanceData = await fetchCreditBalance(user.email);
         setBalance(balanceData.credit);
+        console.log('[DEBUG] Balance refreshed successfully');
+        
+        // Only fetch history after balance is done
+        console.log('[DEBUG] Now refreshing history...');
+        const historyData = await fetchCreditHistory(user.email);
         setCreditRequests(historyData);
+        console.log('[DEBUG] History refreshed successfully');
       } catch (error) {
-        console.error('Error refreshing credit data:', error);
+        console.error('[DEBUG] Error refreshing credit data:', error);
+        toast.error("Failed to refresh data after submission");
+      } finally {
+        setIsRefreshing(false);
       }
     }
   };
