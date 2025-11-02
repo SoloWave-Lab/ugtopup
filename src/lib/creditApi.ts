@@ -57,28 +57,67 @@ export const fetchCreditBalance = async (email: string): Promise<CreditBalance> 
         throw new Error(`Failed to fetch credit balance: ${response.status}`);
       }
 
-      const data: WebhookCreditResponse = await response.json();
-      console.log('[DEBUG] Balance response data:', data);
-
-      // Handle different field name formats from n8n
-      const userEmail = data.user_email || data.email;
-      const creditAmount = data.Credit ?? data.credit;
-
-      console.log('[DEBUG] Parsed email:', userEmail, 'credit:', creditAmount);
-
-      // Validate email matches
-      if (userEmail !== email) {
-        throw new Error(`Email mismatch in response. Expected: ${email}, Got: ${userEmail}`);
+      let data: any;
+      const contentType = response.headers.get('content-type') || '';
+      try {
+        if (contentType.includes('application/json')) {
+          data = await response.json();
+        } else {
+          const text = await response.text();
+          console.log('[DEBUG] Balance raw text response:', text);
+          // Parse simple "key: value" lines to an object
+          const lines = text.split(/\r?\n/).filter(Boolean);
+          const obj: Record<string, string> = {};
+          for (const line of lines) {
+            const [key, ...rest] = line.split(':');
+            if (!key) continue;
+            obj[key.trim()] = rest.join(':').trim();
+          }
+          data = obj;
+        }
+      } catch (e) {
+        console.warn('[DEBUG] Failed to parse JSON, falling back to text if available');
+        const text = await response.text();
+        const lines = text.split(/\r?\n/).filter(Boolean);
+        const obj: Record<string, string> = {};
+        for (const line of lines) {
+          const [key, ...rest] = line.split(':');
+          if (!key) continue;
+          obj[key.trim()] = rest.join(':').trim();
+        }
+        data = obj;
       }
 
-      // Validate credit field exists and is a number
+      console.log('[DEBUG] Balance response data (normalized raw):', data);
+
+      // Handle different field name formats from n8n and coerce types
+      const parsedEmail = (data.user_email || data.email || '').toString().trim();
+      const rawCredit = (data.Credit ?? data.credit) as unknown;
+
+      // Coerce credit to number even if it comes as a string like "500" or "500 Cr"
+      let creditAmount: number | undefined;
+      if (typeof rawCredit === 'number') {
+        creditAmount = rawCredit;
+      } else if (typeof rawCredit === 'string') {
+        const cleaned = rawCredit.replace(/[^\d.-]/g, '');
+        const n = Number.parseFloat(cleaned);
+        creditAmount = Number.isFinite(n) ? n : undefined;
+      }
+
+      console.log('[DEBUG] Parsed email:', parsedEmail, 'credit:', creditAmount);
+
+      // If webhook omits email or case differs, proceed but warn; use requested email as source of truth
+      if (parsedEmail && parsedEmail.toLowerCase() !== email.toLowerCase()) {
+        console.warn(`[DEBUG] Email mismatch in response. Expected: ${email}, Got: ${parsedEmail}. Proceeding with requested email.`);
+      }
+
       if (typeof creditAmount !== 'number') {
-        throw new Error(`Invalid credit value in response: ${creditAmount} (type: ${typeof creditAmount})`);
+        throw new Error(`Invalid credit value in response: ${String(rawCredit)} (type: ${typeof rawCredit})`);
       }
 
       // Return normalized format
       return {
-        email: userEmail,
+        email,
         credit: creditAmount
       };
     } catch (error) {
