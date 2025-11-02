@@ -16,6 +16,7 @@ export interface CreditRequest {
 interface WebhookCreditResponse {
   user_email?: string;  // n8n might send this
   email?: string;       // or this
+  credits?: number;     // n8n sends this (plural) - PRIMARY
   Credit?: number;      // n8n might send this (capital C)
   credit?: number;      // or this (lowercase c)
 }
@@ -88,11 +89,22 @@ export const fetchCreditBalance = async (email: string): Promise<CreditBalance> 
         data = obj;
       }
 
-      console.log('[DEBUG] Balance response data (normalized raw):', data);
+      console.log('[DEBUG] Balance response data (raw):', data);
+
+      // If webhook returns an array, extract the first element
+      if (Array.isArray(data)) {
+        if (data.length === 0) {
+          throw new Error('Webhook returned empty array');
+        }
+        console.log('[DEBUG] Response is an array, extracting first element');
+        data = data[0];
+        console.log('[DEBUG] Extracted first element:', data);
+      }
 
       // Handle different field name formats from n8n and coerce types
       const parsedEmail = (data.user_email || data.email || '').toString().trim();
-      const rawCredit = (data.Credit ?? data.credit) as unknown;
+      // Priority order: credits (plural), Credit (capital), credit (lowercase)
+      const rawCredit = (data.credits ?? data.Credit ?? data.credit) as unknown;
 
       // Coerce credit to number even if it comes as a string like "500" or "500 Cr"
       let creditAmount: number | undefined;
