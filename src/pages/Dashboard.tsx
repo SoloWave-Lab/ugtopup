@@ -10,15 +10,16 @@ import { CreditRequestHistory } from "@/components/topup/CreditRequestHistory";
 import { TopUpModal } from "@/components/topup/TopUpModal";
 import { ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
-import { fetchCreditBalance, fetchCreditHistory, type CreditRequest } from "@/lib/creditApi";
+import { fetchCreditBalance, fetchCreditHistory, type CreditHistoryEntry } from "@/lib/creditApi";
 
 const Dashboard = () => {
   const { user, profile } = useAuth();
   const [topUpModalOpen, setTopUpModalOpen] = useState(false);
   const [balance, setBalance] = useState(0);
-  const [creditRequests, setCreditRequests] = useState<CreditRequest[]>([]);
+  const [creditRequests, setCreditRequests] = useState<CreditHistoryEntry[]>([]);
   const [loadingBalance, setLoadingBalance] = useState(true);
   const [loadingHistory, setLoadingHistory] = useState(true);
+  const [historyError, setHistoryError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Extract username from profile or email
@@ -29,7 +30,7 @@ const Dashboard = () => {
 
   // Calculate stats from credit data
   const topUps = creditRequests.length;
-  const pendingTopUps = creditRequests.filter(r => r.status === 'pending').length;
+  const pendingTopUps = creditRequests.filter(r => r.status.toLowerCase() === 'pending').length;
 
   // Fetch balance from n8n
   useEffect(() => {
@@ -66,12 +67,23 @@ const Dashboard = () => {
         return;
       }
 
+      setHistoryError(null);
+      
       try {
         const requests = await fetchCreditHistory(user.email);
+        console.log('[DEBUG] History rows received:', requests.length, requests[0] || null);
         setCreditRequests(requests);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error loading history:', error);
-        toast.error("Failed to load credit history");
+        
+        const errorMsg = error?.message || 'Unknown error';
+        if (errorMsg.includes('Invalid data')) {
+          setHistoryError('Invalid data received.');
+        } else if (errorMsg.includes('timeout')) {
+          setHistoryError('Request timeout - please try again later.');
+        } else {
+          setHistoryError('Failed to load credit history. Please try again later.');
+        }
       } finally {
         setLoadingHistory(false);
       }
@@ -159,6 +171,7 @@ const Dashboard = () => {
           <CreditRequestHistory 
             requests={creditRequests} 
             loading={loadingHistory}
+            error={historyError}
           />
         </div>
 

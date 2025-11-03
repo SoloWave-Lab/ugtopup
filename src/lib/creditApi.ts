@@ -12,6 +12,13 @@ export interface CreditRequest {
   user_email?: string;
 }
 
+// Normalized credit history entry for display
+export interface CreditHistoryEntry {
+  ordernumber: string;
+  credits: number;
+  status: string;
+}
+
 // Raw webhook response format (what n8n actually sends)
 interface WebhookCreditResponse {
   user_email?: string;  // n8n might send this
@@ -151,68 +158,126 @@ export const fetchCreditBalance = async (email: string): Promise<CreditBalance> 
 };
 
 /**
- * Fetch user's credit request history from n8n
+ * Fetch credit request history from n8n webhook
+ * Returns array of normalized credit history entries for display
  */
-export const fetchCreditHistory = async (email: string): Promise<CreditRequest[]> => {
+export const fetchCreditHistory = async (email: string): Promise<CreditHistoryEntry[]> => {
   return requestDeduplicator.dedupe(`history:${email}`, async () => {
+    console.log(`[FETCH] Getting credit history for: ${email}`);
+    
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
-
-    console.log('[DEBUG] Fetching credit history for:', email);
-
-  try {
-    const response = await fetch(`${HISTORY_WEBHOOK}?email=${encodeURIComponent(email)}`, {
-      method: 'GET',
-      signal: controller.signal,
-      headers: {
-        'Accept': 'application/json',
-      },
-    });
-
-    clearTimeout(timeoutId);
-
-    console.log('[DEBUG] History response status:', response.status, 'OK:', response.ok);
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch credit history: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('[DEBUG] History response data:', data);
-
-    // Handle both direct array and nested object formats
-    let requests: CreditRequest[];
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
     
-    if (Array.isArray(data)) {
-      // Direct array format: [...]
-      requests = data;
-    } else if (data && typeof data === 'object' && Array.isArray(data.requests)) {
-      // Nested object format: { requests: [...] }
-      requests = data.requests;
-    } else if (data && typeof data === 'object' && Array.isArray(data.data)) {
-      // Alternative nested format: { data: [...] }
-      requests = data.data;
-    } else {
-      console.warn('Unexpected credit history response format:', data);
-      return [];
-    }
-
-    console.log('[DEBUG] Parsed requests count:', requests.length);
-      return requests;
-    } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError') {
-      console.error('[DEBUG] Request timeout for credit history');
-      throw new Error('Request timeout: Server took too long to respond');
-    }
-    
-      console.error('[DEBUG] Error fetching credit history:', {
-        error,
-        message: error instanceof Error ? error.message : 'Unknown error',
-        email
+    try {
+      const response = await fetch(HISTORY_WEBHOOK, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        signal: controller.signal,
       });
-      throw error;
-    } finally {
+
       clearTimeout(timeoutId);
+
+      console.log(`[FETCH] History response status: ${response.status}`);
+      console.log(`[FETCH] History response content-type: ${response.headers.get('content-type')}`);
+
+      if (!response.ok) {
+        throw new Error(`Webhook returned ${response.status}: ${response.statusText}`);
+      }
+
+      const contentType = response.headers.get('content-type') || '';
+      let data: any;
+
+      if (contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        try {
+          data = JSON.parse(text);
+        } catch {
+          throw new Error('Invalid data received');
+        }
+      }
+
+      console.log('[DEBUG] History response data (raw):', data);
+      console.log('[DEBUG] History response type:', Array.isArray(data) ? 'array' : typeof data);
+
+      // Handle different response formats
+      let records: any[] = [];
+      
+      if (Array.isArray(data)) {
+        records = data;
+      } else if (data && typeof data === 'object') {
+        // Check for nested arrays
+        if (Array.isArray(data.requests)) {
+          records = data.requests;
+        } else if (Array.isArray(data.data)) {
+          records = data.data;
+        } else if (Array.isArray(data.history)) {
+          records = data.history;
+        } else {
+          records = [data];
+        }
+      }
+
+      console.log('[DEBUG] Extracted records count:', records.length);
+      if (records.length > 0) {
+        console.log('[DEBUG] First record sample:', records[0]);
+      }
+
+      // Normalize keys helper
+      const normKey = (k: string) => k.toString().replace(/[\s_-]+/g, "").toLowerCase();
+
+      // Normalize each record
+      const normalized: CreditHistoryEntry[] = records
+        .map((item, index) => {
+          // Create normalized key map
+          const km: Record<string, any> = {};
+          Object.entries(item).forEach(([k, v]) => {
+            km[normKey(k)] = v;
+          });
+
+          // Extract ordernumber (various possible field names)
+          const orderRaw = km.ordernumber ?? km.orderid ?? km.order ?? km.requestid ?? km.id ?? String(index + 1);
+          
+          // Extract credits (various possible field names, coerce to number)
+          const creditRaw = km.credits ?? km.credit ?? km.amount ?? 0;
+          
+          // Extract status (various possible field names, lowercase)
+          const statusRaw = km.status ?? km.state ?? km.approved ?? "pending";
+
+          const ordernumber = String(orderRaw).trim();
+          const credits = typeof creditRaw === "number" 
+            ? creditRaw 
+            : Number.parseFloat(String(creditRaw).replace(/[^\d.-]/g, "")) || 0;
+          const status = String(statusRaw).trim().toLowerCase();
+
+          return { ordernumber, credits, status };
+        })
+        .filter(entry => entry.ordernumber && Number.isFinite(entry.credits));
+
+      console.log('[DEBUG] Normalized records count:', normalized.length);
+      if (normalized.length > 0) {
+        console.log('[DEBUG] First normalized record:', normalized[0]);
+      }
+
+      return normalized;
+
+    } catch (error: any) {
+      clearTimeout(timeoutId);
+      console.error('[ERROR] Credit history fetch failed:', error);
+      
+      if (error.name === 'AbortError') {
+        throw new Error('Request timeout - please try again');
+      }
+      
+      if (error.message?.includes('Invalid data')) {
+        throw new Error('Invalid data received');
+      }
+      
+      throw new Error('Failed to load credit history');
     }
   });
 };
