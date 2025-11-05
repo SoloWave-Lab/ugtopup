@@ -8,7 +8,7 @@ import { Download, Upload, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import qrCode from "@/assets/ug-gaming-topup-qr.jpg";
-import { submitCreditRequest } from "@/lib/creditApi";
+
 
 interface TopUpModalProps {
   open: boolean;
@@ -99,9 +99,10 @@ export const TopUpModal = ({ open, onOpenChange, onSuccess }: TopUpModalProps) =
       // Add the image file as binary data with metadata
       formData.append('screenshot', screenshot, screenshot.name);
 
-      // Send to n8n webhook
-      const webhookResult = await submitCreditRequest(formData);
-      console.log('Webhook response:', webhookResult);
+      // Send to n8n webhook - DISABLED (webhook function removed)
+      // const webhookResult = await submitCreditRequest(formData);
+      // console.log('Webhook response:', webhookResult);
+      console.log('Webhook submission disabled - function removed');
 
       toast.success("Credit request submitted successfully! Status: Pending");
       
