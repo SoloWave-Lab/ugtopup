@@ -150,10 +150,19 @@ export const fetchActivityLogs = async (limit = 100): Promise<ActivityLog[]> => 
  */
 export const checkAdminAccess = async (): Promise<boolean> => {
   try {
+    const { data: userRes } = await supabase.auth.getUser();
+    console.log('[AdminAccess] Current user:', userRes?.user?.id, userRes?.user?.email);
+
     const { data, error } = await supabase.rpc('is_admin');
-    if (error) return false;
+    if (error) {
+      console.warn('[AdminAccess] is_admin RPC error:', error.message);
+      return false;
+    }
+
+    console.log('[AdminAccess] is_admin result:', data);
     return data === true;
-  } catch {
+  } catch (e) {
+    console.warn('[AdminAccess] check failed:', e);
     return false;
   }
 };
