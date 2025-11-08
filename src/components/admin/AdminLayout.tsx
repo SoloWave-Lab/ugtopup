@@ -4,6 +4,7 @@ import {
   CreditCard,
   ShoppingCart,
   Activity,
+  Package,
   Menu,
   LogOut,
 } from "lucide-react";
@@ -35,6 +36,7 @@ const menuItems = [
   { id: "dashboard", title: "Dashboard", icon: LayoutDashboard },
   { id: "payments", title: "Credit Requests", icon: CreditCard },
   { id: "orders", title: "Order Management", icon: ShoppingCart },
+  { id: "products", title: "Products", icon: Package },
   { id: "activity", title: "Activity Logs", icon: Activity },
 ];
 

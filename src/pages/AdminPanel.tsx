@@ -5,6 +5,9 @@ import { EnhancedDashboard } from "@/components/admin/EnhancedDashboard";
 import { CreditRequestsTable } from "@/components/admin/CreditRequestsTable";
 import { OrderManagement } from "@/components/admin/OrderManagement";
 import { ActivityLogs } from "@/components/admin/ActivityLogs";
+import { ProductsList } from "@/components/admin/ProductsList";
+import { AddProduct } from "@/components/admin/AddProduct";
+import { EditProduct } from "@/components/admin/EditProduct";
 import { checkAdminAccess } from "@/lib/adminApi";
 import { toast } from "sonner";
 
@@ -53,6 +56,12 @@ const AdminPanel = () => {
         return <CreditRequestsTable />;
       case "orders":
         return <OrderManagement />;
+      case "products":
+        return <ProductsList />;
+      case "add-product":
+        return <AddProduct />;
+      case "edit-product":
+        return <EditProduct />;
       case "activity":
         return <ActivityLogs />;
       default:
