@@ -19,9 +19,9 @@ export const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center py-2">
             <img 
-              src="/logo.jpg" 
+              src="https://i.ibb.co/JR0CQPpN/SAVE-20251108-175711.jpg" 
               alt="UG TOP-UP" 
-              className="h-14 w-auto object-contain md:h-16"
+              className="h-16 w-auto object-contain md:h-20"
               loading="eager"
             />
           </Link>

@@ -2,9 +2,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductCard } from "@/components/ProductCard";
 import { useToast } from "@/hooks/use-toast";
 
-import productFreefire from "@/assets/product-freefire.jpg";
-import productMl from "@/assets/product-ml.jpg";
-import productTiktok from "@/assets/product-tiktok.jpg";
 import gameRoblox from "@/assets/game-roblox.jpg";
 import gamePubg from "@/assets/game-pubg.jpg";
 import productUnipin from "@/assets/product-unipin.jpg";
@@ -16,9 +13,9 @@ import productCapcut from "@/assets/product-capcut.jpg";
 
 const productData = {
   topup: [
-    { id: 1, title: "Free Fire Diamond 🔥", image: productFreefire, link: "/product/freefire-diamond" },
-    { id: 2, title: "Mobile Legends Diamond", image: productMl, link: "/product/mobile-legends" },
-    { id: 3, title: "TikTok Coins", image: productTiktok, link: "/product/tiktok-coins" },
+    { id: 1, title: "Free Fire Diamond 🔥", image: "https://i.ibb.co/C5spS0zQ/SAVE-20251108-163350.jpg", link: "/product/freefire-diamond" },
+    { id: 2, title: "Mobile Legends Diamond", image: "https://i.ibb.co/KjW0Ptdt/SAVE-20251108-180521.jpg", link: "/product/mobile-legends" },
+    { id: 3, title: "TikTok Coins", image: "https://i.ibb.co/H0FwhXn/SAVE-20251108-180527.jpg", link: "/product/tiktok-coins" },
     { id: 4, title: "Roblox Robux Top-Ups", image: gameRoblox, link: "/product/roblox-topup" },
     { id: 5, title: "PUBG Mobile UC 🎯", image: gamePubg, link: "/product/pubg-mobile" },
   ],
@@ -33,10 +30,10 @@ const productData = {
     { id: 3, title: "Netflix Subscription", image: productNetflix, link: "/product/netflix" },
   ],
   design: [
-    { id: 1, title: "Logo Design", image: "https://images.unsplash.com/photo-1626785774625-ddcddc3445e9?w=400&h=400&fit=crop", link: "/product/logo-design" },
-    { id: 2, title: "Post Design", image: "https://images.unsplash.com/photo-1558655146-d09347e92766?w=400&h=400&fit=crop", link: "/product/post-design" },
-    { id: 3, title: "Banner Design", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=400&fit=crop", link: "/product/banner-design" },
-    { id: 4, title: "Thumbnail Design", image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=400&fit=crop", link: "/product/thumbnail-design" },
+    { id: 1, title: "Logo Design", image: "https://i.ibb.co/MxC1sGxQ/SAVE-20251108-163259.jpg", link: "/product/logo-design" },
+    { id: 2, title: "Post Design", image: "https://i.ibb.co/MxC1sGxQ/SAVE-20251108-163259.jpg", link: "/product/post-design" },
+    { id: 3, title: "Banner Design", image: "https://i.ibb.co/MxC1sGxQ/SAVE-20251108-163259.jpg", link: "/product/banner-design" },
+    { id: 4, title: "Thumbnail Design", image: "https://i.ibb.co/MxC1sGxQ/SAVE-20251108-163259.jpg", link: "/product/thumbnail-design" },
   ],
 };
 

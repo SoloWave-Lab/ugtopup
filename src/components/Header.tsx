@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Menu, Plus } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TopUpModal } from "./topup/TopUpModal";
 import {
   DropdownMenu,
@@ -11,11 +11,45 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Header = () => {
   const { isAuthenticated, profile, user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [topUpModalOpen, setTopUpModalOpen] = useState(false);
+  const [balance, setBalance] = useState(profile?.balance || 0);
+
+  // Real-time balance updates
+  useEffect(() => {
+    if (!user?.id) return;
+
+    // Set initial balance from profile
+    if (profile?.balance !== undefined) {
+      setBalance(profile.balance);
+    }
+
+    // Subscribe to real-time balance changes
+    const channel = supabase
+      .channel('header-balance-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('[Header] Balance updated:', payload.new.balance);
+          setBalance(payload.new.balance);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id, profile?.balance]);
 
   return (
     <header className="sticky top-0 z-50 bg-black/95 backdrop-blur-lg border-b border-white/5">
@@ -24,9 +58,9 @@ export const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center py-2">
             <img 
-              src="/logo.jpg" 
+              src="https://i.ibb.co/JR0CQPpN/SAVE-20251108-175711.jpg" 
               alt="UG TOP-UP" 
-              className="h-12 md:h-16 w-auto object-contain"
+              className="h-14 md:h-20 w-auto object-contain"
               loading="eager"
             />
           </Link>
@@ -38,7 +72,7 @@ export const Header = () => {
                 {/* Credit Balance */}
                 <div className="hidden sm:flex items-center gap-2 bg-black/60 border border-white/10 rounded-xl px-4 py-2">
                   <span className="text-sm font-semibold text-white">
-                    {profile?.balance || 0} Cr.
+                    {balance || 0} Cr.
                   </span>
                 </div>
 
@@ -127,7 +161,7 @@ export const Header = () => {
                       {profile?.username || user?.email?.split('@')[0]}
                     </p>
                     <p className="text-xs text-white/60">
-                      {profile?.balance || 0} Cr.
+                      {balance || 0} Cr.
                     </p>
                   </div>
                 </div>

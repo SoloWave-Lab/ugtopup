@@ -1,28 +1,25 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import heroSlide1 from "@/assets/hero-slide-1.jpg";
-import heroSlide2 from "@/assets/hero-slide-2.jpg";
-import heroSlide3 from "@/assets/hero-slide-3.jpg";
 
 const slides = [
   {
     id: 1,
-    image: heroSlide1,
+    image: "https://i.ibb.co/8g6kkFqj/SAVE-20251108-163252.jpg",
     title: "UG GAMING STORE",
     subtitle: "Best Price • 100% Trusted • Instant Delivery",
     ctaText: "Order Now",
   },
   {
     id: 2,
-    image: heroSlide2,
+    image: "https://i.ibb.co/JW63HtJt/SAVE-20251108-163202.jpg",
     title: "TOP-UP YOUR FAVORITE GAMES",
     subtitle: "Fast & Secure • Best Prices • 24/7 Support",
     ctaText: "Shop Now",
   },
   {
     id: 3,
-    image: heroSlide3,
+    image: "https://i.ibb.co/tp2RLMF0/SAVE-20251108-163211.jpg",
     title: "INSTANT DELIVERY",
     subtitle: "Get your game credits instantly",
     ctaText: "Order Now",
@@ -31,6 +28,11 @@ const slides = [
 
 export const HeroBanner = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [imageLoading, setImageLoading] = useState<{ [key: number]: boolean }>({
+    0: true,
+    1: true,
+    2: true,
+  });
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -62,11 +64,20 @@ export const HeroBanner = () => {
               }`}
             >
               <div className="relative h-full w-full">
+                {imageLoading[index] && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-background">
+                    <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                  </div>
+                )}
                 <img
                   src={slide.image}
                   alt={slide.title}
-                  className="h-full w-full object-cover object-center"
+                  className={`h-full w-full object-cover object-center transition-opacity duration-300 ${
+                    imageLoading[index] ? 'opacity-0' : 'opacity-100'
+                  }`}
                   loading={index === 0 ? "eager" : "lazy"}
+                  onLoad={() => setImageLoading(prev => ({ ...prev, [index]: false }))}
+                  onError={() => setImageLoading(prev => ({ ...prev, [index]: false }))}
                 />
                 {/* Subtle Gradient Overlay for Text Readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" />

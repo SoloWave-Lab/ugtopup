@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Header } from "@/components/Header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +16,39 @@ const Account = () => {
   const [username, setUsername] = useState(profile?.username || "");
   const [isLoading, setIsLoading] = useState(false);
   const [isLinking, setIsLinking] = useState(false);
+  const [balance, setBalance] = useState(profile?.balance || 0);
+
+  // Real-time balance updates
+  useEffect(() => {
+    if (!user?.id) return;
+
+    // Set initial balance from profile
+    if (profile?.balance !== undefined) {
+      setBalance(profile.balance);
+    }
+
+    // Subscribe to real-time balance changes
+    const channel = supabase
+      .channel('account-balance-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('[Account] Balance updated:', payload.new.balance);
+          setBalance(payload.new.balance);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id, profile?.balance]);
 
   const handleSaveProfile = async () => {
     setIsLoading(true);
@@ -165,10 +198,10 @@ const Account = () => {
                 />
               </div>
 
-              <div className="space-y-2">
+                <div className="space-y-2">
                 <Label>Account Balance</Label>
                 <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-primary/5 border border-primary/20">
-                  <span className="text-2xl font-bold text-primary">₹{profile?.balance || 0}</span>
+                  <span className="text-2xl font-bold text-primary">₹{balance || 0}</span>
                   <span className="text-sm text-muted-foreground">Credits</span>
                 </div>
               </div>

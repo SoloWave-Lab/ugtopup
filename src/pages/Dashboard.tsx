@@ -11,16 +11,16 @@ import { TopUpModal } from "@/components/topup/TopUpModal";
 import { ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { fetchUserPaymentRequests, fetchUserBalance, type CreditHistoryEntry } from "@/lib/creditApi";
+import { supabase } from "@/integrations/supabase/client";
 
 const Dashboard = () => {
   const { user, profile } = useAuth();
   const [topUpModalOpen, setTopUpModalOpen] = useState(false);
-  const [balance, setBalance] = useState(0);
+  const [balance, setBalance] = useState(profile?.balance || 0);
   const [creditRequests, setCreditRequests] = useState<CreditHistoryEntry[]>([]);
   const [loadingBalance, setLoadingBalance] = useState(true);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [historyError, setHistoryError] = useState<string | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Extract username from profile or email
   const username = profile?.username || profile?.full_name || user?.email?.split('@')[0] || 'User';
@@ -32,98 +32,91 @@ const Dashboard = () => {
   const topUps = creditRequests.length;
   const pendingTopUps = creditRequests.filter(r => r.status.toLowerCase() === 'pending').length;
 
-  // Fetch balance from n8n
+  // Real-time balance updates
   useEffect(() => {
-    const loadBalance = async () => {
-      if (!user?.email || isRefreshing) {
-        console.log('[DEBUG] Skipping balance fetch - already refreshing or no email');
-        if (!user?.email) setLoadingBalance(false);
-        return;
-      }
+    if (!user?.id) return;
 
-      try {
-        const balance = await fetchUserBalance();
-        setBalance(balance);
-      } catch (error) {
-        console.error('Error loading balance:', error);
-        toast.error("Failed to load credit balance");
-      } finally {
-        setLoadingBalance(false);
-      }
+    // Set initial balance from profile
+    if (profile?.balance !== undefined) {
+      setBalance(profile.balance);
+      setLoadingBalance(false);
+    }
+
+    // Subscribe to real-time balance changes
+    const channel = supabase
+      .channel('balance-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('[Real-time] Balance updated:', payload.new.balance);
+          setBalance(payload.new.balance);
+          toast.success('Balance updated!');
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
     };
+  }, [user?.id, profile?.balance]);
 
-    loadBalance(); // Load immediately
-    const interval = setInterval(loadBalance, 120000); // Refresh every 2 minutes
-
-    return () => clearInterval(interval);
-  }, [user?.email, isRefreshing]);
-
-  // Fetch credit history from n8n
+  // Real-time credit request updates
   useEffect(() => {
-    const loadHistory = async () => {
-      if (!user?.email || isRefreshing) {
-        console.log('[DEBUG] Skipping history fetch - already refreshing or no email');
-        if (!user?.email) setLoadingHistory(false);
-        return;
-      }
+    if (!user?.id) return;
 
+    const loadHistory = async () => {
       setHistoryError(null);
-      
       try {
         const requests = await fetchUserPaymentRequests();
-        console.log('[DEBUG] History rows received:', requests.length, requests[0] || null);
         setCreditRequests(requests);
       } catch (error: any) {
         console.error('Error loading history:', error);
-        
-        const errorMsg = error?.message || 'Unknown error';
-        if (errorMsg.includes('Invalid data')) {
-          setHistoryError('Invalid data received.');
-        } else if (errorMsg.includes('timeout')) {
-          setHistoryError('Request timeout - please try again later.');
-        } else {
-          setHistoryError('Failed to load credit history. Please try again later.');
-        }
+        setHistoryError('Failed to load credit history.');
       } finally {
         setLoadingHistory(false);
       }
     };
 
-    loadHistory(); // Load immediately
-    const interval = setInterval(loadHistory, 120000); // Refresh every 2 minutes
+    loadHistory();
 
-    return () => clearInterval(interval);
-  }, [user?.email, isRefreshing]);
+    // Subscribe to real-time payment request changes
+    const channel = supabase
+      .channel('payment-request-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'payment_requests',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('[Real-time] Payment request updated:', payload);
+          loadHistory(); // Reload history when any change occurs
+          toast.success('Credit request updated!');
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id]);
 
   const handleTopUpClick = () => {
     setTopUpModalOpen(true);
   };
 
   const handleTopUpSuccess = async () => {
-    toast.success("Credit request submitted! Refreshing data...");
-    
-    // Sequential refresh: balance first, then history (wait for webhook to respond)
-    if (user?.email) {
-      setIsRefreshing(true);
-      try {
-        // Wait for balance to complete first
-        console.log('[DEBUG] Refreshing balance first...');
-        const balanceData = await fetchUserBalance();
-        setBalance(balanceData);
-        console.log('[DEBUG] Balance refreshed successfully');
-        
-        // Only fetch history after balance is done
-        console.log('[DEBUG] Now refreshing history...');
-        const historyData = await fetchUserPaymentRequests();
-        setCreditRequests(historyData);
-        console.log('[DEBUG] History refreshed successfully');
-      } catch (error) {
-        console.error('[DEBUG] Error refreshing credit data:', error);
-        toast.error("Failed to refresh data after submission");
-      } finally {
-        setIsRefreshing(false);
-      }
-    }
+    toast.success("Credit request submitted successfully!");
+    setTopUpModalOpen(false);
+    // Real-time subscriptions will handle the updates automatically
   };
 
   return (
