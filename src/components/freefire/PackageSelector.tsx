@@ -1,38 +1,13 @@
-import { Package } from "@/data/freefirePackages";
+import { Package, topUpPackages, specialDeals } from "@/data/freefirePackages";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Product } from "@/lib/productApi";
 
 interface PackageSelectorProps {
   selectedPackage: Package | null;
   onSelectPackage: (pkg: Package) => void;
-  products: Product[];
 }
 
-export const PackageSelector = ({ selectedPackage, onSelectPackage, products }: PackageSelectorProps) => {
-  // Convert database products to Package format
-  const topUpPackages = products
-    .filter(p => p.metadata && (p.metadata as any).type === 'topup')
-    .map(p => ({
-      id: p.id,
-      type: 'topup' as const,
-      name: p.name,
-      quantity: (p.metadata as any)?.quantity || 0,
-      price: Number(p.price),
-      currency: '💵' as const
-    }));
-
-  const specialDeals = products
-    .filter(p => p.metadata && (p.metadata as any).type === 'special')
-    .map(p => ({
-      id: p.id,
-      type: 'special' as const,
-      name: p.name,
-      quantity: (p.metadata as any)?.quantity || 1,
-      price: Number(p.price),
-      currency: '💵' as const
-    }));
-
+export const PackageSelector = ({ selectedPackage, onSelectPackage }: PackageSelectorProps) => {
   return (
     <div className="space-y-8">
       {/* Top-up Amount Section */}

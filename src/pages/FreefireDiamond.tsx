@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ProductHeader } from "@/components/freefire/ProductHeader";
 import { UserInputForm, UserFormData } from "@/components/freefire/UserInputForm";
 import { PackageSelector } from "@/components/freefire/PackageSelector";
@@ -10,8 +10,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { createOrder, generateOrderNumber } from "@/lib/orderApi";
-import { fetchAllProducts, type Product } from "@/lib/productApi";
-import { supabase } from "@/integrations/supabase/client";
 
 const FreefireDiamond = () => {
   const [formData, setFormData] = useState<UserFormData | null>(null);
@@ -20,57 +18,10 @@ const FreefireDiamond = () => {
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [orderId, setOrderId] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
 
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  // Fetch products from database
-  useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        const data = await fetchAllProducts({ 
-          category: 'freefire', 
-          is_active: true 
-        });
-        setProducts(data);
-      } catch (error) {
-        console.error('Error loading products:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load products",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadProducts();
-  }, [toast]);
-
-  // Real-time subscription for price updates
-  useEffect(() => {
-    const channel = supabase
-      .channel("freefire-products-realtime")
-      .on("postgres_changes", {
-        event: "*",
-        schema: "public",
-        table: "products",
-        filter: `category=eq.freefire`,
-      }, () => {
-        // Reload products when any change occurs
-        fetchAllProducts({ category: 'freefire', is_active: true })
-          .then(setProducts)
-          .catch(console.error);
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
 
   const handleFormDataChange = (data: UserFormData) => {
     setFormData(data);
@@ -191,15 +142,10 @@ const FreefireDiamond = () => {
 
         {/* Package Selection Section */}
         <section>
-          {loading ? (
-            <div className="text-center py-8 text-muted-foreground">Loading products...</div>
-          ) : (
-            <PackageSelector
-              selectedPackage={selectedPackage}
-              onSelectPackage={setSelectedPackage}
-              products={products}
-            />
-          )}
+          <PackageSelector
+            selectedPackage={selectedPackage}
+            onSelectPackage={setSelectedPackage}
+          />
         </section>
 
         {/* Continue Button - Fixed Bottom */}
