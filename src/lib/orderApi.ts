@@ -2,7 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export interface OrderInput {
   order_number: string;
-  product_category: 'freefire' | 'tiktok' | 'netflix' | 'garena' | 'youtube' | 'smilecoin' | 'chatgpt' | 'unipin' | 'other' | 'design' | 'mobile_legends' | 'roblox';
+  product_category: 'freefire' | 'tiktok' | 'netflix' | 'garena' | 'youtube' | 'smilecoin' | 'chatgpt' | 'unipin' | 'other' | 'design' | 'mobile_legends' | 'roblox' | 'pubg';
   product_name: string;
   package_name: string;
   quantity: number;

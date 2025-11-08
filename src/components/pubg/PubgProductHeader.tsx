@@ -2,9 +2,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { AccountDropdown } from "@/components/AccountDropdown";
 import { Link } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
-import robloxLogo from "@/assets/roblox-new.jpg";
+import pubgLogo from "@/assets/game-pubg.jpg";
 
-export const RobloxProductHeader = () => {
+export const PubgProductHeader = () => {
   const { user, profile } = useAuth();
 
   return (
@@ -22,14 +22,14 @@ export const RobloxProductHeader = () => {
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-lg overflow-hidden">
                 <img 
-                  src={robloxLogo} 
-                  alt="Roblox" 
+                  src={pubgLogo} 
+                  alt="PUBG Mobile" 
                   className="w-full h-full object-cover"
                 />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">Roblox Top-Up</h1>
-                <p className="text-xs text-muted-foreground">Instant Robux Delivery</p>
+                <h1 className="text-xl font-bold text-foreground">PUBG Mobile UC</h1>
+                <p className="text-xs text-muted-foreground">Instant UC Delivery</p>
               </div>
             </div>
           </div>

@@ -6,6 +6,7 @@ import productFreefire from "@/assets/product-freefire.jpg";
 import productMl from "@/assets/product-ml.jpg";
 import productTiktok from "@/assets/product-tiktok.jpg";
 import gameRoblox from "@/assets/game-roblox.jpg";
+import gamePubg from "@/assets/game-pubg.jpg";
 import productUnipin from "@/assets/product-unipin.jpg";
 import productGarena from "@/assets/product-garena.jpg";
 import productSmile from "@/assets/product-smile.jpg";
@@ -19,6 +20,7 @@ const productData = {
     { id: 2, title: "Mobile Legends Diamond", image: productMl, link: "/product/mobile-legends" },
     { id: 3, title: "TikTok Coins", image: productTiktok, link: "/product/tiktok-coins" },
     { id: 4, title: "Roblox Robux Top-Ups", image: gameRoblox, link: "/product/roblox-topup" },
+    { id: 5, title: "PUBG Mobile UC 🎯", image: gamePubg, link: "/product/pubg-mobile" },
   ],
   voucher: [
     { id: 1, title: "Unipin UC", image: productUnipin, link: "/product/unipin-uc" },

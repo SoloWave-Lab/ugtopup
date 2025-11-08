@@ -1,47 +1,31 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import heroUgGaming from "@/assets/hero-ug-gaming.jpg";
-import heroDiamonds from "@/assets/hero-diamonds.jpg";
-import heroGamingMandu from "@/assets/hero-gaming-mandu.jpg";
-import heroInstantTopup from "@/assets/hero-instant-topup.jpg";
-import heroFreefireShop from "@/assets/hero-freefire-shop.jpg";
+import heroSlide1 from "@/assets/hero-slide-1.jpg";
+import heroSlide2 from "@/assets/hero-slide-2.jpg";
+import heroSlide3 from "@/assets/hero-slide-3.jpg";
 
 const slides = [
   {
     id: 1,
-    image: heroUgGaming,
+    image: heroSlide1,
     title: "UG GAMING STORE",
     subtitle: "Best Price • 100% Trusted • Instant Delivery",
     ctaText: "Order Now",
   },
   {
     id: 2,
-    image: heroDiamonds,
-    title: "TOP-UP DIAMONDS",
-    subtitle: "Get your diamonds instantly",
-    ctaText: "Order Now",
+    image: heroSlide2,
+    title: "TOP-UP YOUR FAVORITE GAMES",
+    subtitle: "Fast & Secure • Best Prices • 24/7 Support",
+    ctaText: "Shop Now",
   },
   {
     id: 3,
-    image: heroGamingMandu,
-    title: "GAME ON ANYTIME",
-    subtitle: "Trusted • Cheapest • Fastest",
+    image: heroSlide3,
+    title: "INSTANT DELIVERY",
+    subtitle: "Get your game credits instantly",
     ctaText: "Order Now",
-  },
-  {
-    id: 4,
-    image: heroInstantTopup,
-    title: "TOP-UP YOUR FAVORITE GAMES",
-    subtitle: "Fast delivery • Trusted seller",
-    ctaText: "Order Now",
-  },
-  {
-    id: 5,
-    image: heroFreefireShop,
-    title: "FREE FIRE DIAMOND TOP-UP",
-    subtitle: "Get diamonds instantly at best price",
-    ctaText: "Shop Now",
   },
 ];
 

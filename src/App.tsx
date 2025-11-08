@@ -25,6 +25,7 @@ import Netflix from "./pages/Netflix";
 import GarenaShell from "./pages/GarenaShell";
 import MobileLegends from "./pages/MobileLegends";
 import RobloxTopUp from "./pages/RobloxTopUp";
+import PubgMobile from "./pages/PubgMobile";
 import LogoDesign from "./pages/LogoDesign";
 import PostDesign from "./pages/PostDesign";
 import BannerDesign from "./pages/BannerDesign";
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/product/garena-shell" element={<GarenaShell />} />
             <Route path="/product/mobile-legends" element={<MobileLegends />} />
             <Route path="/product/roblox-topup" element={<RobloxTopUp />} />
+            <Route path="/product/pubg-mobile" element={<PubgMobile />} />
             <Route path="/product/logo-design" element={<LogoDesign />} />
             <Route path="/product/post-design" element={<PostDesign />} />
             <Route path="/product/banner-design" element={<BannerDesign />} />
