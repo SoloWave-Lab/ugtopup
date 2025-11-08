@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchAllProducts, deleteProduct, updateProduct, Product } from "@/lib/productApi";
+import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -51,6 +52,24 @@ export const ProductsList = () => {
 
   useEffect(() => {
     loadProducts();
+  }, [categoryFilter, stockFilter, search]);
+
+  // Real-time subscription for product changes
+  useEffect(() => {
+    const channel = supabase
+      .channel("admin-products-realtime")
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "products",
+      }, () => {
+        loadProducts();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [categoryFilter, stockFilter, search]);
 
   const handleDelete = async () => {

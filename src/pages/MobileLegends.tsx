@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { MLProductHeader } from "@/components/ml/MLProductHeader";
 import { MLUserInputForm } from "@/components/ml/MLUserInputForm";
@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { createOrder, generateOrderNumber } from "@/lib/orderApi";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { fetchAllProducts, type Product } from "@/lib/productApi";
+import { supabase } from "@/integrations/supabase/client";
 
 const MobileLegends = () => {
   const { user, profile } = useAuth();
@@ -27,6 +29,48 @@ const MobileLegends = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState("");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch products from database
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const data = await fetchAllProducts({ 
+          category: 'mobile_legends', 
+          is_active: true 
+        });
+        setProducts(data);
+      } catch (error) {
+        console.error('Error loading products:', error);
+        toast.error("Failed to load products");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProducts();
+  }, []);
+
+  // Real-time subscription for price updates
+  useEffect(() => {
+    const channel = supabase
+      .channel("ml-products-realtime")
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "products",
+        filter: `category=eq.mobile_legends`,
+      }, () => {
+        fetchAllProducts({ category: 'mobile_legends', is_active: true })
+          .then(setProducts)
+          .catch(console.error);
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -131,10 +175,15 @@ const MobileLegends = () => {
             errors={errors}
           />
           
-          <MLPackageSelector
-            selectedPackage={selectedPackage}
-            onSelectPackage={setSelectedPackage}
-          />
+          {loading ? (
+            <div className="text-center py-8 text-muted-foreground">Loading products...</div>
+          ) : (
+            <MLPackageSelector
+              selectedPackage={selectedPackage}
+              onSelectPackage={setSelectedPackage}
+              products={products}
+            />
+          )}
         </div>
       </div>
 

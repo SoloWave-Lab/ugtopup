@@ -1,13 +1,40 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { mlDiamondPackages, mlSpecialDeals, type MLPackage } from "@/data/mlPackages";
+import { type MLPackage } from "@/data/mlPackages";
 import { Check } from "lucide-react";
+import type { Product } from "@/lib/productApi";
 
 interface MLPackageSelectorProps {
   selectedPackage: MLPackage | null;
   onSelectPackage: (pkg: MLPackage) => void;
+  products: Product[];
 }
 
-export const MLPackageSelector = ({ selectedPackage, onSelectPackage }: MLPackageSelectorProps) => {
+export const MLPackageSelector = ({ selectedPackage, onSelectPackage, products }: MLPackageSelectorProps) => {
+  // Convert database products to MLPackage format
+  const mlDiamondPackages = products
+    .filter(p => p.metadata && (p.metadata as any).type === 'diamond')
+    .map(p => ({
+      id: p.id,
+      type: 'diamond' as const,
+      name: p.name,
+      quantity: (p.metadata as any)?.quantity || 0,
+      price: Number(p.price),
+      currency: '₹',
+      icon: '💎'
+    }));
+
+  const mlSpecialDeals = products
+    .filter(p => p.metadata && (p.metadata as any).type === 'special')
+    .map(p => ({
+      id: p.id,
+      type: 'special' as const,
+      name: p.name,
+      quantity: (p.metadata as any)?.quantity || 1,
+      price: Number(p.price),
+      currency: '₹',
+      icon: (p.metadata as any)?.icon || '⭐'
+    }));
+
   return (
     <div className="space-y-6">
       <Card className="bg-slate-900/50 backdrop-blur-xl border-slate-800/50">
