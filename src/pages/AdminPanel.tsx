@@ -6,6 +6,7 @@ import { CreditRequestsTable } from "@/components/admin/CreditRequestsTable";
 import { OrderManagement } from "@/components/admin/OrderManagement";
 import { ActivityLogs } from "@/components/admin/ActivityLogs";
 import { ProductsList } from "@/components/admin/ProductsList";
+import { ProductsByCategory } from "@/components/admin/ProductsByCategory";
 import { AddProduct } from "@/components/admin/AddProduct";
 import { EditProduct } from "@/components/admin/EditProduct";
 import { checkAdminAccess } from "@/lib/adminApi";
@@ -49,6 +50,12 @@ const AdminPanel = () => {
   }
 
   const renderContent = () => {
+    // Handle category-specific routes
+    if (activeSection.startsWith("products-")) {
+      const category = activeSection.replace("products-", "");
+      return <ProductsByCategory category={category} />;
+    }
+
     switch (activeSection) {
       case "dashboard":
         return <EnhancedDashboard />;
