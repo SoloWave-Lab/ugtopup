@@ -232,6 +232,60 @@ export type Database = {
         }
         Relationships: []
       }
+      products: {
+        Row: {
+          category: Database["public"]["Enums"]["product_category"]
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          metadata: Json | null
+          name: string
+          original_price: number | null
+          price: number
+          product_id: string
+          quantity: number | null
+          stock_status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["product_category"]
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          metadata?: Json | null
+          name: string
+          original_price?: number | null
+          price: number
+          product_id: string
+          quantity?: number | null
+          stock_status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["product_category"]
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          metadata?: Json | null
+          name?: string
+          original_price?: number | null
+          price?: number
+          product_id?: string
+          quantity?: number | null
+          stock_status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -419,6 +473,9 @@ export type Database = {
         | "chatgpt"
         | "unipin"
         | "other"
+        | "mobile_legends"
+        | "roblox"
+        | "design"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -577,6 +634,9 @@ export const Constants = {
         "chatgpt",
         "unipin",
         "other",
+        "mobile_legends",
+        "roblox",
+        "design",
       ],
     },
   },
