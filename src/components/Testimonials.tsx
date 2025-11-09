@@ -1,34 +1,35 @@
 import { useState, useEffect } from "react";
-import { Quote } from "lucide-react";
 
 const testimonials = [
   {
     id: 1,
-    name: "Alex Johnson",
-    role: "PUBG Player",
-    feedback: "Best service I've ever used! Lightning-fast delivery and great prices. Highly recommended!",
-    initials: "AJ",
+    name: "Prakash Tamang",
+    feedback: "UGTopups never disappoints — trusted and offers the best rates in Nepal.",
   },
   {
     id: 2,
-    name: "Sarah Williams",
-    role: "Free Fire Enthusiast",
-    feedback: "Amazing experience! The support team is incredibly helpful and the process is super smooth.",
-    initials: "SW",
+    name: "Nikita Bhattrai",
+    feedback: "Super quick delivery and excellent customer support. 100% genuine site.",
   },
   {
     id: 3,
-    name: "Mike Chen",
-    role: "Roblox Creator",
-    feedback: "Trustworthy and reliable. I've been using this service for months and never had any issues.",
-    initials: "MC",
+    name: "Rojit Tamang",
+    feedback: "Affordable, instant, and trustworthy. My go-to top-up site every time.",
   },
   {
     id: 4,
-    name: "Emma Davis",
-    role: "Mobile Gamer",
-    feedback: "The cheapest prices and fastest delivery. This is my go-to platform for all game top-ups!",
-    initials: "ED",
+    name: "Tirtha Raj",
+    feedback: "Best experience ever. No delays or issues — just fast and professional service.",
+  },
+  {
+    id: 5,
+    name: "Raju Das",
+    feedback: "UGTopups is the only platform I trust for Free Fire diamonds. Excellent work.",
+  },
+  {
+    id: 6,
+    name: "Abhiraj Yadav",
+    feedback: "Quick, safe, and easy. I'll continue using UGTopups for all my future top-ups.",
   },
 ];
 
@@ -46,7 +47,7 @@ export const Testimonials = () => {
     <section className="py-16 bg-muted/30">
       <div className="container mx-auto px-4">
         <h2 className="mb-12 text-center text-3xl font-bold md:text-4xl">
-          Testimonials
+          CUSTOMER REVIEWS
         </h2>
 
         <div className="relative mx-auto max-w-3xl">
@@ -59,23 +60,15 @@ export const Testimonials = () => {
                 }`}
               >
                 <div className="glass-card rounded-2xl p-8 md:p-12">
-                  <Quote className="mb-4 h-8 w-8 text-primary" />
-                  <p className="mb-6 text-lg leading-relaxed text-foreground">
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-2xl">⭐</span>
+                    <p className="font-bold text-lg text-primary">
+                      {testimonial.name}
+                    </p>
+                  </div>
+                  <p className="text-lg leading-relaxed text-foreground">
                     "{testimonial.feedback}"
                   </p>
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold">
-                      {testimonial.initials}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-primary">
-                        {testimonial.name}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {testimonial.role}
-                      </p>
-                    </div>
-                  </div>
                 </div>
               </div>
             ))}

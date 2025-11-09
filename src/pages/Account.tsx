@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, Mail, Shield, Link as LinkIcon, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { PasswordManagement } from "@/components/account/PasswordManagement";
 
 const Account = () => {
   const { user, profile, updateProfile } = useAuth();
@@ -298,41 +299,23 @@ const Account = () => {
             </CardContent>
           </Card>
 
-          {/* Security */}
-          {!isGoogleUser && (
-            <Card className="bg-card border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-primary" />
-                  Security
-                </CardTitle>
-                <CardDescription>Manage your password and security settings</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="current-password">Current Password</Label>
-                  <Input
-                    id="current-password"
-                    type="password"
-                    placeholder="••••••••"
-                    className="bg-input border-border"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="new-password">New Password</Label>
-                  <Input
-                    id="new-password"
-                    type="password"
-                    placeholder="••••••••"
-                    className="bg-input border-border"
-                  />
-                </div>
-                <Button className="neon-button">
-                  Update Password
-                </Button>
-              </CardContent>
-            </Card>
-          )}
+          {/* Security - Password Management */}
+          <Card className="bg-card border-border">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                Security
+              </CardTitle>
+              <CardDescription>
+                {isGoogleUser 
+                  ? "Set a password to enable email login" 
+                  : "Manage your password and security settings"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <PasswordManagement isGoogleUser={isGoogleUser} />
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>
