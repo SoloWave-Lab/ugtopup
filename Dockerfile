@@ -30,6 +30,9 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Expose port 80
 EXPOSE 80
 
+# Ensure wget is available for the healthcheck (alpine nginx image doesn't include it by default)
+RUN apk add --no-cache wget
+
 # Health check for monitoring
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost:80 || exit 1
